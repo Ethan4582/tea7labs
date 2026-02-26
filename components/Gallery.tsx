@@ -19,7 +19,7 @@ export default function Gallery() {
    }, []);
 
    return (
-      <section id="gallery" className="relative w-[100vw] h-[100svh]">
+      <section id="gallery" className="gallery-container relative w-[100vw] h-[100svh]">
          <div className="vignette-overlay absolute top-0 left-0 w-full h-full pointer-events-none z-10"></div>
       </section>
    );

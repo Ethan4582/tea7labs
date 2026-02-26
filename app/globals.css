@@ -1,4 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap");
+
+
 @import "tailwindcss";
 
 :root {
@@ -25,12 +27,15 @@ body {
   color: var(--foreground);
   font-family: "IBM Plex Mono", monospace;
   background-color: #000;
+}
+
+.gallery-container {
   cursor: grab;
   user-select: none;
   overflow: hidden;
 }
 
-body.dragging {
+.gallery-container.dragging {
   cursor: grabbing;
 }
 

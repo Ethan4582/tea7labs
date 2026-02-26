@@ -172,7 +172,8 @@ const startDrag = (x: number, y: number) => {
    isDragging = true;
    isClick = true;
    clickStartTime = Date.now();
-   document.body.classList.add("dragging");
+   const gallery = document.getElementById("gallery");
+   if (gallery) gallery.classList.add("dragging");
    previousMouse.x = x;
    previousMouse.y = y;
 
@@ -211,7 +212,8 @@ const onTouchMove = (e: TouchEvent) => {
 
 const onPointerUp = (event: MouseEvent | TouchEvent) => {
    isDragging = false;
-   document.body.classList.remove("dragging");
+   const gallery = document.getElementById("gallery");
+   if (gallery) gallery.classList.remove("dragging");
    targetZoom = 1.0;
 
    if (isClick && Date.now() - clickStartTime < 200) {
