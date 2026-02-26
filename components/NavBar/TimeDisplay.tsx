@@ -34,12 +34,12 @@ export default function TimeDisplay({ location, timeZone, label, icon }: TimeDis
    }, [timeZone]);
 
    return (
-      <div className="flex items-center gap-x-6 text-[11px] sm:text-xs">
-         <div className="flex items-center gap-2 text-[#999] w-[140px]">
-            {icon && <span className="opacity-80 text-[10px] sm:text-xs">{icon}</span>}
-            <span className="uppercase tracking-widest">{location}</span>
+      <div className="flex items-center justify-between text-[9px] sm:text-[10px] w-[200px]">
+         <div className="flex items-center gap-2 text-[#888]">
+            {icon && <span className="opacity-80 text-[10px] sm:text-[10px]">{icon}</span>}
+            <span className="uppercase tracking-[0.1em] font-medium">{location}</span>
          </div>
-         <span className="text-white uppercase tracking-wider font-semibold">
+         <span className="text-[#bbb] uppercase tracking-[0.1em] font-medium">
             {time ? `${time} ${label}` : ""}
          </span>
       </div>

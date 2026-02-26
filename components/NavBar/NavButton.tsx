@@ -9,7 +9,7 @@ export default function NavButton({ label, href }: NavButtonProps) {
    return (
       <Link
          href={href}
-         className="bg-[#f0f0f0] text-black font-semibold rounded-full px-6 py-2.5 sm:px-8 sm:py-3 text-sm sm:text-base hover:bg-white transition-colors pointer-events-auto"
+         className="bg-[#fff] text-black font-semibold rounded-[40px] px-8 py-3.5 sm:px-10 sm:py-4 text-sm sm:text-[15px] hover:bg-white transition-colors pointer-events-auto inline-flex items-center justify-center leading-none tracking-tight"
       >
          {label}
       </Link>
