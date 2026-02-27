@@ -2,214 +2,222 @@
 
 import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
-import gsap from "gsap";
+import { useRouter } from "next/navigation";
+import { gsap } from "gsap";
 
 interface LetsTalkModalProps {
-   isOpen: boolean;
-   onClose: () => void;
+  isOpen: boolean;
+  onClose: () => void;
 }
 
 export default function LetsTalkModal({ isOpen, onClose }: LetsTalkModalProps) {
-   const [mounted, setMounted] = useState(false);
-   const headingRef = useRef<HTMLHeadingElement | null>(null);
-   const overlayRef = useRef<HTMLDivElement | null>(null);
+  const [mounted, setMounted] = useState(false);
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  const headingWrapRef = useRef<HTMLDivElement>(null);
+  const cardsRef = useRef<HTMLDivElement>(null);
+  const tlRef = useRef<gsap.core.Timeline | null>(null);
+  const router = useRouter();
 
-   useEffect(() => {
-      if (isOpen) {
-         setMounted(true);
-      } else {
-         const t = setTimeout(() => setMounted(false), 700);
-         return () => clearTimeout(t);
-      }
-   }, [isOpen]);
-
-   // Animate heading: overlay starts centered and moves to the real heading location
-   useEffect(() => {
-      if (!isOpen) {
-         // hide overlay on close
-         if (overlayRef.current) {
-            gsap.killTweensOf(overlayRef.current);
-            overlayRef.current.style.opacity = "0";
-            overlayRef.current.style.display = "none";
-         }
-         if (headingRef.current) {
-            headingRef.current.style.opacity = "1";
-         }
-         return;
-      }
-
-      // run animation after next paint so layout measurements are correct
-      const t = setTimeout(() => {
-         const overlay = overlayRef.current;
-         const target = headingRef.current;
-         if (!overlay || !target) return;
-
-         // make sure overlay is visible and styled
-         overlay.style.display = "block";
-         overlay.style.opacity = "1";
-         overlay.style.transform = "translate(-50%,-50%) scale(1)";
-         overlay.style.left = "50%";
-         overlay.style.top = "50%";
-
-         // hide the original heading until animation completes
-         target.style.opacity = "0";
-
-         // measure
-         const targetRect = target.getBoundingClientRect();
-         const overlayRect = overlay.getBoundingClientRect();
-
-         const overlayCenterX = overlayRect.left + overlayRect.width / 2;
-         const overlayCenterY = overlayRect.top + overlayRect.height / 2;
-         const targetCenterX = targetRect.left + targetRect.width / 2;
-         const targetCenterY = targetRect.top + targetRect.height / 2;
-
-         const dx = targetCenterX - overlayCenterX;
-         const dy = targetCenterY - overlayCenterY;
-         const scale = targetRect.width / overlayRect.width || 1;
-
-         // reset transforms
-         gsap.set(overlay, { x: 0, y: 0, scale: 1, opacity: 1 });
-
-         // Wait centered before smoothly gliding
-         gsap.to(overlay, {
-            delay: 0.8,
-            duration: 1.2,
-            x: dx,
-            y: dy,
-            scale,
-            ease: "power3.inOut",
-            onComplete: () => {
-               // reveal real heading and fade out overlay
-               target.style.transition = "opacity 120ms";
-               target.style.opacity = "1";
-               gsap.to(overlay, { duration: 0.18, opacity: 0, onComplete: () => { overlay.style.display = "none"; } });
-            },
-         });
-      }, 50);
-
+  useEffect(() => {
+    if (isOpen) {
+      setMounted(true);
+    } else {
+      const t = setTimeout(() => setMounted(false), 700);
       return () => clearTimeout(t);
-   }, [isOpen]);
+    }
+  }, [isOpen]);
 
-   if (!mounted) return null;
+  useEffect(() => {
+    if (!mounted || !isOpen) return;
+    const heading = headingRef.current;
+    const cards = cardsRef.current;
+    if (!heading || !cards) return;
 
-   return (
-      <div
-         className={`fixed inset-0 z-[100] flex flex-col justify-start items-center p-6 sm:p-10 transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] ${isOpen ? "opacity-100 backdrop-blur-3xl bg-black/60" : "opacity-0 backdrop-blur-none bg-transparent pointer-events-none"
-            }`}
+    if (tlRef.current) tlRef.current.kill();
+
+    // Start heading fixed at dead center
+    gsap.set(heading, {
+      position: "fixed",
+      top: "50%",
+      left: "50%",
+      xPercent: -50,
+      yPercent: -50,
+      scale: 1.1,
+      opacity: 0,
+      zIndex: 200,
+    });
+
+    gsap.set(cards, { opacity: 0, y: 50 });
+
+    const tl = gsap.timeline();
+    tlRef.current = tl;
+
+    // 1. Fade in at center
+    tl.to(heading, {
+      opacity: 1,
+      scale: 1,
+      duration: 1.2,
+      ease: "power2.out",
+    })
+    // 2. Hold in center for 1.8s
+    .to(heading, { duration: 4.8 })
+    // 3. Slowly glide to top-left header position
+    .to(heading, {
+      top: "0%",
+      left: "0%",
+      xPercent: 0,
+      yPercent: 0,
+      scale: 0.85,
+      duration: 1.8,
+      ease: "power3.inOut",
+      onComplete: () => {
+        // Switch from fixed to relative so layout takes over
+        gsap.set(heading, {
+          clearProps: "all",
+          position: "relative",
+          opacity: 1,
+        });
+      },
+    })
+    // 4. Cards fade up
+    .to(cards, {
+      opacity: 1,
+      y: 0,
+      duration: 0.9,
+      ease: "power3.out",
+    }, "-=0.3");
+
+    return () => { tl.kill(); };
+  }, [mounted, isOpen]);
+
+  const handleClose = () => {
+    onClose();
+    router.push("/");
+  };
+
+  if (!mounted) return null;
+
+  return (
+    <div
+      className={`fixed inset-0 z-[100] transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] ${
+        isOpen
+          ? "opacity-100 backdrop-blur-2xl bg-black/50"
+          : "opacity-0 backdrop-blur-none bg-transparent pointer-events-none"
+      }`}
+    >
+      {/* Close button — top right, bigger, frosted */}
+      <button
+        onClick={handleClose}
+        className="absolute top-6 right-6 z-[300] w-12 h-12 rounded-full flex items-center justify-center
+          bg-white/10 backdrop-blur-md border border-white/20
+          hover:bg-white/20 hover:border-white/40 transition-all duration-300
+          group"
+        aria-label="Close"
       >
-         {/* Centered overlay copy that animates into place */}
-         <div
-            ref={overlayRef}
-            style={{
-               position: "fixed",
-               left: "50%",
-               top: "50%",
-               transform: "translate(-50%,-50%)",
-               pointerEvents: "none",
-               zIndex: 110,
-               display: "none",
-               whiteSpace: "nowrap",
-            }}
-            className="text-white leading-[1.1] font-ballinger-mono text-[2.5rem] sm:text-[3.5rem] md:text-[4.5rem] lg:text-[5vw] font-bold"
-         >
+        <span
+          className="text-white text-lg font-light leading-none
+            transition-transform duration-500 ease-in-out
+            group-hover:rotate-90 inline-block"
+        >
+          ✕
+        </span>
+      </button>
+
+      {/* Full page flex layout */}
+      <div className="w-full h-full flex flex-col items-center justify-center px-6 sm:px-10 pt-10">
+
+        {/* Heading wrapper — reserves space once heading goes relative */}
+        <div ref={headingWrapRef} className="w-full max-w-5xl mb-10">
+          <h1
+            ref={headingRef}
+            className="text-white text-[2.2rem] sm:text-[3rem] md:text-[4rem] lg:text-[4.5vw] leading-[1.1] tracking-tight font-bold text-left whitespace-nowrap"
+            style={{ fontFamily: "'Ballinger Mono', monospace" }}
+          >
             Welcome! It's great to meet you.
-         </div>
+          </h1>
+        </div>
 
-         {/* Close button that looks like the "LET'S TALK" back button in the reference image */}
-         <div className="absolute top-8 sm:top-10 right-6 sm:right-10 z-[101]">
-            <button
-               onClick={onClose}
-               className="w-10 h-10 rounded-full border border-[#444] bg-[#111]/80 backdrop-blur-md flex items-center justify-center text-white/50 hover:bg-white hover:text-black hover:border-white transition-all duration-500 ease-out"
-            >
-               <span className="text-sm">✕</span>
-            </button>
-         </div>
-
-         <div className="w-full h-full pt-16 sm:pt-20 flex flex-col items-center relative z-[105]">
-            {/* The title original placement */}
-            <div className={`transition-all duration-1000 ease-[cubic-bezier(0.22,1,0.36,1)] w-full max-w-5xl ${isOpen
-               ? "opacity-100"
-               : "opacity-0"
-               }`}>
-               <h1
-                  ref={headingRef}
-                  className="text-white text-[2.5rem] sm:text-[3.5rem] md:text-[4.5rem] lg:text-[5vw] leading-[1.1] font-ballinger-mono tracking-tight font-bold w-full text-left"
-               >
-                  Welcome! It's great to meet you.
-               </h1>
+        {/* 3 Equal Cards */}
+        <div
+          ref={cardsRef}
+          className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-3 gap-5"
+          style={{ gridAutoRows: "340px" }}
+        >
+          {/* Collaboration Card */}
+          <div className="bg-black/50 backdrop-blur-md border border-white/10 rounded-3xl p-8
+            flex flex-col overflow-hidden group cursor-pointer
+            hover:bg-black/70 hover:border-white/20 transition-all duration-500">
+            <div className="flex items-center gap-2 text-[10px] text-[#999] font-mono tracking-widest uppercase mb-auto">
+              <span className="w-1.5 h-1.5 bg-white rounded-full" />
+              Collaboration
             </div>
-
-            <div className={`mt-12 w-full max-w-7xl mx-auto flex flex-col md:flex-row justify-center items-center gap-6 transition-all duration-1000 ease-[cubic-bezier(0.22,1,0.36,1)] delay-[1000ms] ${isOpen ? "opacity-100 translate-y-0" : "opacity-0 translate-y-24"
-               }`}>
-
-               {/* Collaboration Card */}
-               <div className="aspect-square flex-1 w-full max-w-[400px] bg-black/50 backdrop-blur-xl border border-white/5 rounded-3xl p-6 sm:p-8 md:p-10 relative overflow-hidden group hover:bg-black/70 transition-all duration-500 cursor-pointer flex flex-col">
-                  <div className="flex items-center gap-3 text-[10px] sm:text-xs text-[#999] font-mono tracking-widest mb-16 uppercase">
-                     <span className="w-1.5 h-1.5 bg-white rounded-full"></span>
-                     Collaboration
-                  </div>
-                  <h3 className="text-white text-xl sm:text-2xl md:text-3xl font-sans font-medium mb-auto leading-tight">
-                     I'm interested in working together.
-                  </h3>
-                  <div className="mt-8">
-                     <button className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border border-white/20 flex items-center justify-center text-white/70 group-hover:bg-white group-hover:text-black group-hover:border-white transition-all duration-500">
-                        <span className="text-sm sm:text-base transform -rotate-45 group-hover:rotate-0 transition-transform duration-500">→</span>
-                     </button>
-                  </div>
-               </div>
-
-               {/* Hiring Card */}
-               <div className="aspect-square flex-1 w-full max-w-[400px] bg-black/50 backdrop-blur-xl border border-white/5 rounded-3xl p-6 sm:p-8 md:p-10 relative overflow-hidden group hover:bg-black/70 transition-all duration-500 cursor-pointer flex flex-col">
-                  <div className="flex items-center gap-3 text-[10px] sm:text-xs text-[#999] font-mono tracking-widest mb-16 uppercase">
-                     <span className="w-1.5 h-1.5 bg-white rounded-full"></span>
-                     Hiring
-                  </div>
-                  <h3 className="text-white text-xl sm:text-2xl md:text-3xl font-sans font-medium mb-auto leading-tight">
-                     I'd like to join the team.
-                  </h3>
-                  <div className="mt-8">
-                     <button className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border border-white/20 flex items-center justify-center text-white/70 group-hover:bg-white group-hover:text-black group-hover:border-white transition-all duration-500">
-                        <span className="text-sm sm:text-base transform -rotate-45 group-hover:rotate-0 transition-transform duration-500">→</span>
-                     </button>
-                  </div>
-               </div>
-
-               {/* Anything Else Card */}
-               <div className="aspect-square flex-1 w-full max-w-[400px] bg-black rounded-3xl relative overflow-hidden flex flex-col justify-between group">
-                  <div className="absolute inset-0 z-0">
-                     <Image
-                        src="/assets/img11.png"
-                        alt="Contact Person"
-                        fill
-                        className="object-cover object-center grayscale opacity-60 group-hover:opacity-80 transition-opacity duration-700 group-hover:scale-105"
-                     />
-                  </div>
-                  <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black z-0"></div>
-
-                  <div className="relative z-10 p-6 sm:p-8 md:p-10 flex flex-col h-full pointer-events-none">
-                     <div className="flex items-center gap-3 text-[10px] sm:text-xs text-white/80 font-mono tracking-widest mb-10 uppercase drop-shadow-md">
-                        <span className="w-1.5 h-1.5 bg-white rounded-full"></span>
-                        Anything else
-                     </div>
-                     <h3 className="text-white text-xl sm:text-2xl md:text-3xl font-sans font-medium mb-auto leading-tight drop-shadow-lg">
-                        Just saying hi.
-                     </h3>
-
-                     <div className="flex gap-2 sm:gap-3 w-full mt-8 pointer-events-auto">
-                        <button className="flex-1 bg-white/10 hover:bg-white/20 backdrop-blur-xl border border-white/10 rounded-xl sm:rounded-2xl p-3 sm:p-4 text-left transition-all duration-300">
-                           <div className="text-[8px] sm:text-[10px] text-white/60 font-mono mb-1 md:mb-2 tracking-wider">EMAIL</div>
-                           <div className="text-[10px] sm:text-xs text-white font-mono break-all font-semibold max-w-[120px]">BOO@PHANTOM.AGENCY</div>
-                        </button>
-                        <button className="flex-1 bg-white/10 hover:bg-white/20 backdrop-blur-xl border border-white/10 rounded-xl sm:rounded-2xl p-3 sm:p-4 text-left transition-all duration-300">
-                           <div className="text-[8px] sm:text-[10px] text-white/60 font-mono mb-1 md:mb-2 tracking-wider">WHATSAPP</div>
-                           <div className="text-[10px] sm:text-xs text-white font-mono break-words font-semibold max-w-[120px]">+447982717018</div>
-                        </button>
-                     </div>
-                  </div>
-               </div>
-
+            <h3 className="text-white text-2xl md:text-3xl font-sans font-medium leading-tight my-8">
+              I'm interested in working together.
+            </h3>
+            <div className="mt-auto">
+              <button className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center
+                text-white/70 group-hover:bg-white group-hover:text-black group-hover:border-white
+                transition-all duration-500">
+                <span className="text-base transform -rotate-45 group-hover:rotate-0 transition-transform duration-500">→</span>
+              </button>
             </div>
-         </div>
+          </div>
+
+          {/* Hiring Card */}
+          <div className="bg-black/50 backdrop-blur-md border border-white/10 rounded-3xl p-8
+            flex flex-col overflow-hidden group cursor-pointer
+            hover:bg-black/70 hover:border-white/20 transition-all duration-500">
+            <div className="flex items-center gap-2 text-[10px] text-[#999] font-mono tracking-widest uppercase mb-auto">
+              <span className="w-1.5 h-1.5 bg-white rounded-full" />
+              Hiring
+            </div>
+            <h3 className="text-white text-2xl md:text-3xl font-sans font-medium leading-tight my-8">
+              I'd like to join the team.
+            </h3>
+            <div className="mt-auto">
+              <button className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center
+                text-white/70 group-hover:bg-white group-hover:text-black group-hover:border-white
+                transition-all duration-500">
+                <span className="text-base transform -rotate-45 group-hover:rotate-0 transition-transform duration-500">→</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Anything Else Card */}
+          <div className="bg-black rounded-3xl relative overflow-hidden flex flex-col group cursor-pointer">
+            <div className="absolute inset-0 z-0">
+              <Image
+                src="/assets/img11.png"
+                alt="Contact Person"
+                fill
+                className="object-cover object-center grayscale opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-700"
+              />
+            </div>
+            <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/90 z-0" />
+            <div className="relative z-10 p-8 flex flex-col h-full">
+              <div className="flex items-center gap-2 text-[10px] text-white/80 font-mono tracking-widest uppercase mb-auto drop-shadow-md">
+                <span className="w-1.5 h-1.5 bg-white rounded-full" />
+                Anything else
+              </div>
+              <h3 className="text-white text-2xl md:text-3xl font-sans font-medium leading-tight my-8 drop-shadow-lg">
+                Just saying hi.
+              </h3>
+              <div className="flex gap-3 mt-auto">
+                <button className="flex-1 bg-white/10 hover:bg-white/20 backdrop-blur-xl border border-white/10
+                  rounded-2xl p-4 text-left transition-all duration-300">
+                  <div className="text-[9px] text-white/60 font-mono mb-1.5 tracking-wider">EMAIL</div>
+                  <div className="text-[10px] text-white font-mono font-semibold break-all">BOO@PHANTOM.AGENCY</div>
+                </button>
+                <button className="flex-1 bg-white/10 hover:bg-white/20 backdrop-blur-xl border border-white/10
+                  rounded-2xl p-4 text-left transition-all duration-300">
+                  <div className="text-[9px] text-white/60 font-mono mb-1.5 tracking-wider">WHATSAPP</div>
+                  <div className="text-[10px] text-white font-mono font-semibold">+447982717018</div>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-   );
+    </div>
+  );
 }
