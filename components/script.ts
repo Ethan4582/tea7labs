@@ -22,10 +22,10 @@ const config: Config = {
    hoverColor: "rgba(255, 255, 255, 0)",
 };
 
-let scene: THREE.Scene;
-let camera: THREE.OrthographicCamera;
-let renderer: THREE.WebGLRenderer;
-let plane: THREE.Mesh<THREE.PlaneGeometry, THREE.ShaderMaterial>;
+let scene: THREE.Scene | undefined;
+let camera: THREE.OrthographicCamera | undefined;
+let renderer: THREE.WebGLRenderer | undefined;
+let plane: THREE.Mesh<THREE.PlaneGeometry, THREE.ShaderMaterial> | undefined;
 
 let isDragging = false;
 let isClick = true;
@@ -281,6 +281,7 @@ const setupEventListeners = () => {
 };
 
 export const cleanup = () => {
+   // ── Remove event listeners ──────────────────────────────────────────────
    document.removeEventListener("mousedown", onPointerDown);
    document.removeEventListener("mousemove", onPointerMove);
    document.removeEventListener("mouseup", onPointerUp);
@@ -292,8 +293,13 @@ export const cleanup = () => {
 
    window.removeEventListener("resize", onWindowResize);
 
-   if (animationFrameId) cancelAnimationFrame(animationFrameId);
+   // ── Stop animation loop ─────────────────────────────────────────────────
+   if (animationFrameId) {
+      cancelAnimationFrame(animationFrameId);
+      animationFrameId = 0;
+   }
 
+   // ── Detach canvas from DOM ──────────────────────────────────────────────
    const container = document.getElementById("gallery");
    if (container && renderer && renderer.domElement) {
       if (container.contains(renderer.domElement)) {
@@ -301,9 +307,52 @@ export const cleanup = () => {
       }
    }
 
+   // ── Dispose Three.js GPU resources ─────────────────────────────────────
+   if (plane) {
+      if (plane.geometry) plane.geometry.dispose();
+      if (plane.material) {
+         // Dispose every texture uniform to free GPU memory
+         const uniforms = plane.material.uniforms;
+         if (uniforms) {
+            Object.values(uniforms).forEach((u) => {
+               if (u?.value && u.value instanceof THREE.Texture) {
+                  u.value.dispose();
+               }
+            });
+         }
+         plane.material.dispose();
+      }
+   }
+
+   if (scene) {
+      scene.clear();
+   }
+
    if (renderer) {
       renderer.dispose();
+      renderer.forceContextLoss();
    }
+
+   // ── CRITICAL: reset module-level state so init() starts 100% clean ─────
+   // textTextures accumulates on every init() call — must be cleared here
+   textTextures = [];
+
+   // Null out all Three.js object refs
+   scene = undefined;
+   camera = undefined;
+   renderer = undefined;
+   plane = undefined;
+
+   // Reset interaction state
+   isDragging = false;
+   isClick = true;
+   clickStartTime = 0;
+   previousMouse = { x: 0, y: 0 };
+   offset = { x: 0, y: 0 };
+   targetOffset = { x: 0, y: 0 };
+   mousePosition = { x: -1, y: -1 };
+   zoomLevel = 1.0;
+   targetZoom = 1.0;
 };
 
 const animate = () => {

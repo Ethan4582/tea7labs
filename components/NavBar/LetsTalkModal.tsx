@@ -6,8 +6,8 @@ import { useRouter } from "next/navigation";
 import { gsap } from "gsap";
 
 // ── Link constants ────────────────────────────────────────────────────────────
-const COLLABORATION_URL = "https://twitter.com/yourhandle";
-const HIRING_URL = "https://drive.google.com/file/d/YOUR_FILE_ID/view";
+const COLLABORATION_URL = "https://x.com/SinghAshir65848";
+const HIRING_URL = "https://drive.google.com/file/d/1bPg3furqrxtMcMLzMQW0JzWIi2RScNId/view";
 // ─────────────────────────────────────────────────────────────────────────────
 
 interface LetsTalkModalProps {
@@ -25,7 +25,7 @@ export default function LetsTalkModal({ isOpen, onClose }: LetsTalkModalProps) {
    const tlRef = useRef<gsap.core.Timeline | null>(null);
    const router = useRouter();
 
-   // ── Mount / unmount ─────────────────────────────────────────────────────
+   
    useEffect(() => {
       if (isOpen) {
          setMounted(true);
@@ -100,7 +100,7 @@ export default function LetsTalkModal({ isOpen, onClose }: LetsTalkModalProps) {
       return () => { tl.kill(); };
    }, [mounted, isOpen]);
 
-   // ── Cards fade-in ────────────────────────────────────────────────────────
+ 
    useEffect(() => {
       if (!cardsVisible || !cardsRef.current) return;
       gsap.fromTo(
@@ -135,10 +135,9 @@ export default function LetsTalkModal({ isOpen, onClose }: LetsTalkModalProps) {
             </span>
          </button>
 
-         {/* Content */}
          <div className="w-full h-full flex flex-col justify-center px-10 py-10 pointer-events-none">
 
-            {/* LET'S TALK + heading */}
+         
             <div className="w-full max-w-6xl mx-auto mb-8 pointer-events-auto">
                <div
                   ref={letsTalkRef}
@@ -230,7 +229,7 @@ export default function LetsTalkModal({ isOpen, onClose }: LetsTalkModalProps) {
                            {/* Email — white bg on hover */}
                            <button className="flex-1 bg-white/10 backdrop-blur-xl border border-white/10 rounded-xl py-3 px-4 text-left transition-all duration-300 hover:bg-white hover:border-white group/email">
                               <div className="text-[9px] text-white/60 font-mono mb-1 tracking-wider group-hover/email:text-black/60 transition-colors duration-300">EMAIL</div>
-                              <div className="text-[10px] text-white font-mono font-semibold break-all group-hover/email:text-black transition-colors duration-300">BOO@PHANTOM.AGENCY</div>
+                              <div className="text-[10px] text-white font-mono font-semibold break-all group-hover/email:text-black transition-colors duration-300">tae7lab@gmail.com</div>
                            </button>
                            {/* WhatsApp — green on hover */}
                            <button className="flex-1 bg-white/10 backdrop-blur-xl border border-white/10 rounded-xl py-3 px-4 text-left transition-all duration-300 hover:bg-[#25D366] hover:border-[#25D366] group/wa">
