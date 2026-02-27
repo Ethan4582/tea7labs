@@ -1,8 +1,17 @@
+"use client";
+
+import { usePathname } from "next/navigation";
 import NavText from "./NavText";
 import TimeDisplay from "./TimeDisplay";
 import NavButton from "./NavButton";
 
 export default function NavBar() {
+   const pathname = usePathname();
+
+   if (pathname === "/contact") {
+      return null;
+   }
+
    return (
       <nav className="fixed top-0 right-0 w-full px-6 py-8 sm:px-10 sm:py-10 flex flex-col md:flex-row justify-end items-start md:items-center z-50 pointer-events-none font-mono bg-transparent gap-8 md:gap-16">
 
