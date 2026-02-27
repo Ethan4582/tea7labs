@@ -155,7 +155,7 @@ export default function LetsTalkModal({ isOpen, onClose }: LetsTalkModalProps) {
                </h1>
             </div>
 
-            {/* Cards */}
+           
             {cardsVisible && (
                <div
                   ref={cardsRef}
