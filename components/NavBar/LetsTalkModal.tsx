@@ -62,7 +62,7 @@ export default function LetsTalkModal({ isOpen, onClose }: LetsTalkModalProps) {
          .to({}, { duration: 1.5 })
          // 3. Slowly glide up-left to final header position
          .to(heading, {
-            top: "88px",
+            top: "80px",
             left: "40px",
             xPercent: 0,
             yPercent: 0,
@@ -100,8 +100,8 @@ export default function LetsTalkModal({ isOpen, onClose }: LetsTalkModalProps) {
    return (
       <div
          className={`fixed inset-0 z-[100] transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] ${isOpen
-               ? "opacity-100 backdrop-blur-md bg-black/30"
-               : "opacity-0 backdrop-blur-none bg-transparent pointer-events-none"
+            ? "opacity-100 backdrop-blur-md bg-black/30"
+            : "opacity-0 backdrop-blur-none bg-transparent pointer-events-none"
             }`}
       >
          {/* Close button — top right, frosted, rotates on hover */}
@@ -117,15 +117,19 @@ export default function LetsTalkModal({ isOpen, onClose }: LetsTalkModalProps) {
             </span>
          </button>
 
-         {/* Layout container — heading sits in-flow here after animation lands */}
-         <div className="w-full h-full flex flex-col px-10 pt-20 pb-10">
+         {/* Layout container */}
+         <div className="w-full h-full flex flex-col px-10 pt-16 pb-10 items-center">
 
-            {/* Heading — GSAP pulls it from fixed center into here */}
-            <div className="w-full max-w-5xl mb-10">
+            {/* LET'S TALK label + Heading */}
+            <div className="w-full max-w-6xl mb-10">
+               <div className="flex items-center gap-2 text-[10px] text-white/50 font-mono tracking-widest uppercase mb-3">
+                  <span className="w-1.5 h-1.5 bg-white/50 rounded-full" />
+                  Let's Talk
+               </div>
                <h1
                   ref={headingRef}
-                  className="text-white text-[1.8rem] sm:text-[2.2rem] md:text-[2.8rem] leading-[1.15] tracking-tight font-bold text-left whitespace-nowrap"
-                  style={{ fontFamily: "'Ballinger Mono', monospace", opacity: 0 }}
+                  className="text-white text-[1.8rem] sm:text-[2.4rem] md:text-[3rem] leading-[1.15] tracking-tight font-bold text-left whitespace-nowrap"
+                  style={{ fontFamily: "'Ballinger Mono', monospace", opacity: 0, position: "relative" }}
                >
                   Welcome! It's great to meet you.
                </h1>
@@ -135,14 +139,14 @@ export default function LetsTalkModal({ isOpen, onClose }: LetsTalkModalProps) {
             {cardsVisible && (
                <div
                   ref={cardsRef}
-                  className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-3 gap-5"
-                  style={{ gridAutoRows: "340px", opacity: 0 }}
+                  className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-3 gap-5"
+                  style={{ gridAutoRows: "390px", opacity: 0 }}
                >
                   {/* Collaboration Card */}
-                  <div className="bg-black/50 backdrop-blur-md border border-white/10 rounded-3xl p-8
-              flex flex-col overflow-hidden group cursor-pointer
-              hover:bg-black/70 hover:border-white/20 transition-all duration-500">
-                     <div className="flex items-center gap-2 text-[10px] text-[#999] font-mono tracking-widest uppercase">
+                  <div className="bg-[#0d0d0d]/80 backdrop-blur-xl border border-white/8 rounded-[2.5rem] p-10
+               flex flex-col overflow-hidden group cursor-pointer
+               hover:bg-[#111]/90 hover:border-white/15 transition-all duration-500">
+                     <div className="flex items-center gap-2 text-[10px] text-[#888] font-mono tracking-widest uppercase">
                         <span className="w-1.5 h-1.5 bg-white rounded-full" />
                         Collaboration
                      </div>
@@ -151,18 +155,18 @@ export default function LetsTalkModal({ isOpen, onClose }: LetsTalkModalProps) {
                      </h3>
                      <div className="mt-8">
                         <button className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center
-                  text-white/70 group-hover:bg-white group-hover:text-black group-hover:border-white
-                  transition-all duration-500">
+                   text-white/70 group-hover:bg-white group-hover:text-black group-hover:border-white
+                   transition-all duration-500">
                            <span className="text-base transform -rotate-45 group-hover:rotate-0 transition-transform duration-500">→</span>
                         </button>
                      </div>
                   </div>
 
                   {/* Hiring Card */}
-                  <div className="bg-black/50 backdrop-blur-md border border-white/10 rounded-3xl p-8
-              flex flex-col overflow-hidden group cursor-pointer
-              hover:bg-black/70 hover:border-white/20 transition-all duration-500">
-                     <div className="flex items-center gap-2 text-[10px] text-[#999] font-mono tracking-widest uppercase">
+                  <div className="bg-[#0d0d0d]/80 backdrop-blur-xl border border-white/8 rounded-[2.5rem] p-10
+               flex flex-col overflow-hidden group cursor-pointer
+               hover:bg-[#111]/90 hover:border-white/15 transition-all duration-500">
+                     <div className="flex items-center gap-2 text-[10px] text-[#888] font-mono tracking-widest uppercase">
                         <span className="w-1.5 h-1.5 bg-white rounded-full" />
                         Hiring
                      </div>
@@ -171,25 +175,25 @@ export default function LetsTalkModal({ isOpen, onClose }: LetsTalkModalProps) {
                      </h3>
                      <div className="mt-8">
                         <button className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center
-                  text-white/70 group-hover:bg-white group-hover:text-black group-hover:border-white
-                  transition-all duration-500">
+                   text-white/70 group-hover:bg-white group-hover:text-black group-hover:border-white
+                   transition-all duration-500">
                            <span className="text-base transform -rotate-45 group-hover:rotate-0 transition-transform duration-500">→</span>
                         </button>
                      </div>
                   </div>
 
                   {/* Anything Else Card */}
-                  <div className="bg-black rounded-3xl relative overflow-hidden flex flex-col group cursor-pointer">
+                  <div className="bg-black rounded-[2.5rem] relative overflow-hidden flex flex-col group cursor-pointer">
                      <div className="absolute inset-0 z-0">
                         <Image
-                           src="/assets/img11.png"
+                           src="/assets/p2.jpg"
                            alt="Contact Person"
                            fill
                            className="object-cover object-center grayscale opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-700"
                         />
                      </div>
                      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/90 z-0" />
-                     <div className="relative z-10 p-8 flex flex-col h-full">
+                     <div className="relative z-10 p-10 flex flex-col h-full">
                         <div className="flex items-center gap-2 text-[10px] text-white/80 font-mono tracking-widest uppercase drop-shadow-md">
                            <span className="w-1.5 h-1.5 bg-white rounded-full" />
                            Anything else
@@ -199,12 +203,12 @@ export default function LetsTalkModal({ isOpen, onClose }: LetsTalkModalProps) {
                         </h3>
                         <div className="flex gap-3 mt-8">
                            <button className="flex-1 bg-white/10 hover:bg-white/20 backdrop-blur-xl border border-white/10
-                    rounded-2xl p-4 text-left transition-all duration-300">
+                     rounded-2xl p-4 text-left transition-all duration-300">
                               <div className="text-[9px] text-white/60 font-mono mb-1.5 tracking-wider">EMAIL</div>
                               <div className="text-[10px] text-white font-mono font-semibold break-all">BOO@PHANTOM.AGENCY</div>
                            </button>
                            <button className="flex-1 bg-white/10 hover:bg-white/20 backdrop-blur-xl border border-white/10
-                    rounded-2xl p-4 text-left transition-all duration-300">
+                     rounded-2xl p-4 text-left transition-all duration-300">
                               <div className="text-[9px] text-white/60 font-mono mb-1.5 tracking-wider">WHATSAPP</div>
                               <div className="text-[10px] text-white font-mono font-semibold">+447982717018</div>
                            </button>

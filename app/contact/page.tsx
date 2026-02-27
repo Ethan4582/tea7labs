@@ -44,7 +44,7 @@ export default function ContactPage() {
          .to({}, { duration: 1.5 })
          // 3. Glide smoothly to header position (top-left)
          .to(heading, {
-            top: "88px",
+            top: "80px",
             left: "40px",
             xPercent: 0,
             yPercent: 0,
@@ -81,11 +81,10 @@ export default function ContactPage() {
          {/* Light transparent blur overlay — NOT too black */}
          <div className="absolute inset-0 z-10 backdrop-blur-md bg-black/25 transition-all duration-1000" />
 
-         {/* Close button top-right */}
-         <div className="absolute top-6 right-6 z-[200]">
+         <div className="absolute inset-0 z-[200]">
             <Link
                href="/"
-               className="w-12 h-12 rounded-full border border-white/20 bg-white/10 backdrop-blur-md flex items-center justify-center text-white/70 hover:bg-white/20 hover:border-white/40 transition-all duration-300 group"
+               className="absolute top-6 right-6 w-12 h-12 rounded-full border border-white/20 bg-white/10 backdrop-blur-md flex items-center justify-center text-white/70 hover:bg-white/20 hover:border-white/40 transition-all duration-300 group"
             >
                <span className="text-lg leading-none inline-block transition-transform duration-500 group-hover:rotate-90">
                   ✕
@@ -93,14 +92,17 @@ export default function ContactPage() {
             </Link>
          </div>
 
-         {/* Main content */}
-         <div className="absolute inset-0 z-20 flex flex-col px-10 pt-20 pb-10">
+         <div className="absolute inset-0 z-20 flex flex-col px-10 pt-16 pb-10 items-center">
 
-            {/* Heading — GSAP animates from center into this in-flow spot */}
-            <div className="w-full max-w-5xl mb-10">
+            {/* LET'S TALK label + Heading */}
+            <div className="w-full max-w-6xl mb-10">
+               <div className="flex items-center gap-2 text-[10px] text-white/50 font-mono tracking-widest uppercase mb-3">
+                  <span className="w-1.5 h-1.5 bg-white/50 rounded-full" />
+                  Let's Talk
+               </div>
                <h1
                   ref={headingRef}
-                  className="text-white text-[1.8rem] sm:text-[2.2rem] md:text-[2.8rem] leading-[1.15] tracking-tight font-bold text-left whitespace-nowrap"
+                  className="text-white text-[1.8rem] sm:text-[2.4rem] md:text-[3rem] leading-[1.15] tracking-tight font-bold text-left whitespace-nowrap"
                   style={{ fontFamily: "'Ballinger Mono', monospace", opacity: 0 }}
                >
                   Welcome! It's great to meet you.
@@ -111,12 +113,12 @@ export default function ContactPage() {
             {cardsVisible && (
                <div
                   ref={cardsRef}
-                  className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-3 gap-5 pointer-events-auto"
-                  style={{ gridAutoRows: "340px", opacity: 0 }}
+                  className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-3 gap-5 pointer-events-auto"
+                  style={{ gridAutoRows: "390px", opacity: 0 }}
                >
                   {/* Collaboration Card */}
-                  <div className="bg-black/50 backdrop-blur-md border border-white/10 rounded-3xl p-8 flex flex-col overflow-hidden group cursor-pointer hover:bg-black/70 hover:border-white/20 transition-all duration-500">
-                     <div className="flex items-center gap-2 text-[10px] text-[#999] font-mono tracking-widest uppercase">
+                  <div className="bg-[#0d0d0d]/80 backdrop-blur-xl border border-white/8 rounded-[2.5rem] p-10 flex flex-col overflow-hidden group cursor-pointer hover:bg-[#111]/90 hover:border-white/15 transition-all duration-500">
+                     <div className="flex items-center gap-2 text-[10px] text-[#888] font-mono tracking-widest uppercase">
                         <span className="w-1.5 h-1.5 bg-white rounded-full" />
                         Collaboration
                      </div>
@@ -131,8 +133,8 @@ export default function ContactPage() {
                   </div>
 
                   {/* Hiring Card */}
-                  <div className="bg-black/50 backdrop-blur-md border border-white/10 rounded-3xl p-8 flex flex-col overflow-hidden group cursor-pointer hover:bg-black/70 hover:border-white/20 transition-all duration-500">
-                     <div className="flex items-center gap-2 text-[10px] text-[#999] font-mono tracking-widest uppercase">
+                  <div className="bg-[#0d0d0d]/80 backdrop-blur-xl border border-white/8 rounded-[2.5rem] p-10 flex flex-col overflow-hidden group cursor-pointer hover:bg-[#111]/90 hover:border-white/15 transition-all duration-500">
+                     <div className="flex items-center gap-2 text-[10px] text-[#888] font-mono tracking-widest uppercase">
                         <span className="w-1.5 h-1.5 bg-white rounded-full" />
                         Hiring
                      </div>
@@ -147,17 +149,17 @@ export default function ContactPage() {
                   </div>
 
                   {/* Anything Else Card */}
-                  <div className="bg-black rounded-3xl relative overflow-hidden flex flex-col group cursor-pointer">
+                  <div className="bg-black rounded-[2.5rem] relative overflow-hidden flex flex-col group cursor-pointer">
                      <div className="absolute inset-0 z-0">
                         <Image
-                           src="/assets/img11.png"
+                           src="/assets/p2.jpg"
                            alt="Contact Person"
                            fill
                            className="object-cover object-center grayscale opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-700"
                         />
                      </div>
                      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/90 z-0" />
-                     <div className="relative z-10 p-8 flex flex-col h-full">
+                     <div className="relative z-10 p-10 flex flex-col h-full">
                         <div className="flex items-center gap-2 text-[10px] text-white/80 font-mono tracking-widest uppercase drop-shadow-md">
                            <span className="w-1.5 h-1.5 bg-white rounded-full" />
                            Anything else
