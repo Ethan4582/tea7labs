@@ -26,7 +26,7 @@ export default function NavBar() {
          </div>
 
          <div className="pointer-events-auto md:-mt-1">
-            <NavButton label="Let's Talk" href="#" />
+            <NavButton label="Let's Talk" href="/contact" />
          </div>
 
       </nav>
