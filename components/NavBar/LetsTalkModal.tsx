@@ -124,7 +124,7 @@ export default function LetsTalkModal({ isOpen, onClose }: LetsTalkModalProps) {
             backgroundColor: isOpen ? "rgba(0,0,0,0.30)" : "transparent",
          }}
       >
-         {/* Close button */}
+      
          <button
             onClick={handleClose}
             className="absolute top-6 right-6 z-[300] w-12 h-12 rounded-full flex items-center justify-center bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 hover:border-white/40 transition-all duration-300 group"
@@ -184,7 +184,7 @@ export default function LetsTalkModal({ isOpen, onClose }: LetsTalkModalProps) {
                      </div>
                   </div>
 
-                  {/* Hiring → Google Drive PDF */}
+                
                   <div
                      className="bg-white/[0.04] backdrop-blur-xl border border-white/[0.06] p-8 flex flex-col overflow-hidden group cursor-pointer hover:bg-white/[0.07] transition-all duration-500"
                      onClick={() => window.open(HIRING_URL, "_blank")}
@@ -206,7 +206,7 @@ export default function LetsTalkModal({ isOpen, onClose }: LetsTalkModalProps) {
                      </div>
                   </div>
 
-                  {/* Anything Else */}
+               
                   <div className="bg-black relative overflow-hidden flex flex-col group cursor-pointer">
                      <div className="absolute inset-0 z-0">
                         <Image
@@ -226,12 +226,12 @@ export default function LetsTalkModal({ isOpen, onClose }: LetsTalkModalProps) {
                            Just saying<br />hi.
                         </h3>
                         <div className="flex gap-2 mt-6">
-                           {/* Email — white bg on hover */}
+                         
                            <button className="flex-1 bg-white/10 backdrop-blur-xl border border-white/10 rounded-xl py-3 px-4 text-left transition-all duration-300 hover:bg-white hover:border-white group/email">
                               <div className="text-[9px] text-white/60 font-mono mb-1 tracking-wider group-hover/email:text-black/60 transition-colors duration-300">EMAIL</div>
                               <div className="text-[10px] text-white font-mono font-semibold break-all group-hover/email:text-black transition-colors duration-300">tae7lab@gmail.com</div>
                            </button>
-                           {/* WhatsApp — green on hover */}
+                         
                            <button className="flex-1 bg-white/10 backdrop-blur-xl border border-white/10 rounded-xl py-3 px-4 text-left transition-all duration-300 hover:bg-[#25D366] hover:border-[#25D366] group/wa">
                               <div className="text-[9px] text-white/60 font-mono mb-1 tracking-wider group-hover/wa:text-white/80 transition-colors duration-300">WHATSAPP</div>
                               <div className="text-[10px] text-white font-mono font-semibold group-hover/wa:text-white transition-colors duration-300">+447982717018</div>
