@@ -162,7 +162,7 @@ export default function LetsTalkModal({ isOpen, onClose }: LetsTalkModalProps) {
                   className="w-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-4 pointer-events-auto"
                   style={{ gridAutoRows: "380px", opacity: 0 }}
                >
-                  {/* Collaboration → Twitter */}
+                  
                   <div
                      className="bg-white/[0.04] backdrop-blur-xl border border-white/[0.06] p-8 flex flex-col overflow-hidden group cursor-pointer hover:bg-white/[0.07] transition-all duration-500"
                      onClick={() => window.open(COLLABORATION_URL, "_blank")}
