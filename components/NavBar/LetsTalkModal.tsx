@@ -25,7 +25,7 @@ export default function LetsTalkModal({ isOpen, onClose }: LetsTalkModalProps) {
    const tlRef = useRef<gsap.core.Timeline | null>(null);
    const router = useRouter();
 
-   
+
    useEffect(() => {
       if (isOpen) {
          setMounted(true);
@@ -38,7 +38,7 @@ export default function LetsTalkModal({ isOpen, onClose }: LetsTalkModalProps) {
             el.style.backdropFilter = "none";
             el.style.backgroundColor = "transparent";
             // vendor prefix via bracket notation to avoid TS error
-            (el.style as Record<string, string>)["-webkit-backdrop-filter"] = "none";
+            (el.style as any).webkitBackdropFilter = "none";
          }
          if (tlRef.current) tlRef.current.kill();
          const t = setTimeout(() => setMounted(false), 700);
@@ -100,7 +100,7 @@ export default function LetsTalkModal({ isOpen, onClose }: LetsTalkModalProps) {
       return () => { tl.kill(); };
    }, [mounted, isOpen]);
 
- 
+
    useEffect(() => {
       if (!cardsVisible || !cardsRef.current) return;
       gsap.fromTo(
@@ -137,7 +137,7 @@ export default function LetsTalkModal({ isOpen, onClose }: LetsTalkModalProps) {
 
          <div className="w-full h-full flex flex-col justify-center px-10 py-10 pointer-events-none">
 
-         
+
             <div className="w-full max-w-6xl mx-auto mb-8 pointer-events-auto">
                <div
                   ref={letsTalkRef}
