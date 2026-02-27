@@ -23,3 +23,6 @@ export default function NavButton({ label, href, onClick }: NavButtonProps) {
       </Link>
    );
 }
+
+
+//check the vercel deployment script
