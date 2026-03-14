@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { projects } from "@/components/data";
+import { projects } from "../../../lib/asset_data";
 import Link from "next/link";
 import Image from "next/image";
 

@@ -7,9 +7,10 @@ interface TimeDisplayProps {
    timeZone: string;
    label: string;
    icon?: React.ReactNode;
+   isActive?: boolean;
 }
 
-export default function TimeDisplay({ location, timeZone, label, icon }: TimeDisplayProps) {
+export default function TimeDisplay({ location, timeZone, label, icon, isActive }: TimeDisplayProps) {
    const [time, setTime] = useState("");
 
    useEffect(() => {
@@ -35,11 +36,17 @@ export default function TimeDisplay({ location, timeZone, label, icon }: TimeDis
 
    return (
       <div className="flex items-center justify-between text-[9px] sm:text-[10px] w-[200px]">
-         <div className="flex items-center gap-2 text-[#888]">
-            {icon && <span className="opacity-80 text-[10px] sm:text-[10px]">{icon}</span>}
-            <span className="uppercase tracking-[0.1em] font-medium">{location}</span>
+         <div className={`flex items-center gap-2 ${isActive ? "text-white" : "text-[#888]"}`}>
+            {icon && (
+               <span className={`text-[10px] sm:text-[10px] ${isActive ? "" : "opacity-80"}`}>
+                  {icon}
+               </span>
+            )}
+            <span className={`uppercase tracking-[0.1em] ${isActive ? "font-bold" : "font-medium"}`}>
+               {location}
+            </span>
          </div>
-         <span className="text-[#bbb] uppercase tracking-[0.1em] font-medium">
+         <span className={`uppercase tracking-[0.1em] ${isActive ? "text-white font-bold" : "text-[#bbb] font-medium"}`}>
             {time ? `${time} ${label}` : ""}
          </span>
       </div>

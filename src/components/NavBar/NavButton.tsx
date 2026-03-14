@@ -7,7 +7,7 @@ interface NavButtonProps {
 }
 
 export default function NavButton({ label, href, onClick }: NavButtonProps) {
-   const className = "bg-[#fff] text-black font-semibold rounded-[40px] px-8 py-3.5 sm:px-10 sm:py-4 text-sm sm:text-[15px] hover:bg-white transition-colors pointer-events-auto inline-flex items-center justify-center leading-none tracking-tight";
+   const className = "bg-[#fff] text-black font-semibold rounded-full px-2 py-5 text-sm sm:text-[14px] hover:bg-white transition-colors pointer-events-auto pl-4 pr-4 inline-flex items-center justify-center leading-none tracking-tight";
 
    if (onClick) {
       return (

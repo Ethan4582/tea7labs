@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { projects, type Project } from "./data";
+import { projects, type Project } from "../lib/asset_data";
 import { vertexShader, fragmentShader } from "./shadder";
 
 interface Config {

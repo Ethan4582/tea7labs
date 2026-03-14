@@ -4,11 +4,10 @@ import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { gsap } from "gsap";
-import Gallery from "@/components/Gallery";
+import Gallery from "../../components/Gallery";
 
 // ── Link constants ────────────────────────────────────────────────────────────
-const COLLABORATION_URL = "https://twitter.com/yourhandle";
-const HIRING_URL = "https://drive.google.com/file/d/YOUR_FILE_ID/view";
+import { CONTACT_PAGE } from "../../lib/content_data";
 // ─────────────────────────────────────────────────────────────────────────────
 
 export default function ContactPage() {
@@ -42,7 +41,7 @@ export default function ContactPage() {
       tl.to(heading, { opacity: 1, duration: 1.0, ease: "power2.out" })
          .to({}, { duration: 1.5 })
          .to(heading, {
-            duration: 1.6,
+            duration: 1,
             ease: "power3.inOut",
             onStart() {
                const label = letsTalkRef.current;
@@ -109,14 +108,14 @@ export default function ContactPage() {
                   className="flex items-center gap-2 text-[10px] text-white/50 font-mono tracking-widest uppercase mb-1.5"
                >
                   <span className="w-1.5 h-1.5 bg-white/50 rounded-full" />
-                  Let's Talk
+                  {CONTACT_PAGE.label}
                </div>
                <h1
                   ref={headingRef}
                   className="text-white text-[1.5rem] sm:text-[1.9rem] md:text-[2.4rem] leading-[1.15] tracking-tight font-bold text-left"
                   style={{ fontFamily: "'Ballinger Mono', monospace", opacity: 0 }}
                >
-                  Welcome! It's great to meet you.
+                  {CONTACT_PAGE.heading}
                </h1>
             </div>
 
@@ -130,19 +129,19 @@ export default function ContactPage() {
                
                   <div
                      className="bg-white/[0.04] backdrop-blur-xl border border-white/[0.06] p-8 flex flex-col overflow-hidden group cursor-pointer hover:bg-white/[0.07] transition-all duration-500"
-                     onClick={() => window.open(COLLABORATION_URL, "_blank")}
+                     onClick={() => window.open(CONTACT_PAGE.cards[0].url, "_blank")}
                   >
                      <div className="flex items-center gap-2 text-[10px] text-[#666] font-mono tracking-widest uppercase">
                         <span className="w-1.5 h-1.5 bg-white/60 rounded-full" />
-                        Collaboration
+                        {CONTACT_PAGE.cards[0].label}
                      </div>
                      <h3 className="text-white text-lg md:text-xl font-sans font-medium leading-snug mt-6 mb-auto">
-                        I'm interested in working together.
+                        {CONTACT_PAGE.cards[0].title}
                      </h3>
                      <div className="mt-6">
                         <button
                            className="w-11 h-11 rounded-full border border-white/20 flex items-center justify-center text-white/70 group-hover:bg-white group-hover:text-black group-hover:border-white transition-all duration-500"
-                           onClick={(e) => { e.stopPropagation(); window.open(COLLABORATION_URL, "_blank"); }}
+                           onClick={(e) => { e.stopPropagation(); window.open(CONTACT_PAGE.cards[0].url!, "_blank"); }}
                         >
                            <span className="text-sm transform -rotate-45 group-hover:rotate-0 transition-transform duration-500">→</span>
                         </button>
@@ -152,19 +151,19 @@ export default function ContactPage() {
                  
                   <div
                      className="bg-white/[0.04] backdrop-blur-xl border border-white/[0.06] p-8 flex flex-col overflow-hidden group cursor-pointer hover:bg-white/[0.07] transition-all duration-500"
-                     onClick={() => window.open(HIRING_URL, "_blank")}
+                     onClick={() => window.open(CONTACT_PAGE.cards[1].url, "_blank")}
                   >
                      <div className="flex items-center gap-2 text-[10px] text-[#666] font-mono tracking-widest uppercase">
                         <span className="w-1.5 h-1.5 bg-white/60 rounded-full" />
-                        Hiring
+                        {CONTACT_PAGE.cards[1].label}
                      </div>
                      <h3 className="text-white text-lg md:text-xl font-sans font-medium leading-snug mt-6 mb-auto">
-                        I'd like to join the team.
+                        {CONTACT_PAGE.cards[1].title}
                      </h3>
                      <div className="mt-6">
                         <button
                            className="w-11 h-11 rounded-full border border-white/20 flex items-center justify-center text-white/70 group-hover:bg-white group-hover:text-black group-hover:border-white transition-all duration-500"
-                           onClick={(e) => { e.stopPropagation(); window.open(HIRING_URL, "_blank"); }}
+                           onClick={(e) => { e.stopPropagation(); window.open(CONTACT_PAGE.cards[1].url!, "_blank"); }}
                         >
                            <span className="text-sm transform -rotate-45 group-hover:rotate-0 transition-transform duration-500">→</span>
                         </button>
@@ -174,7 +173,7 @@ export default function ContactPage() {
                   <div className="bg-black relative overflow-hidden flex flex-col group cursor-pointer">
                      <div className="absolute inset-0 z-0">
                         <Image
-                           src="/assets/p2.jpg"
+                           src={CONTACT_PAGE.cards[2].image!}
                            alt="Contact Person"
                            fill
                            className="object-cover object-top grayscale opacity-60 group-hover:opacity-75 group-hover:scale-105 transition-all duration-700"
@@ -184,21 +183,21 @@ export default function ContactPage() {
                      <div className="relative z-10 p-8 flex flex-col h-full">
                         <div className="flex items-center gap-2 text-[10px] text-white/70 font-mono tracking-widest uppercase drop-shadow-md">
                            <span className="w-1.5 h-1.5 bg-white rounded-full" />
-                           Anything else
+                           {CONTACT_PAGE.cards[2].label}
                         </div>
                         <h3 className="text-white text-lg md:text-xl font-sans font-medium leading-snug mt-6 mb-auto drop-shadow-lg">
-                           Just saying<br />hi.
+                           {CONTACT_PAGE.cards[2].title}
                         </h3>
                         <div className="flex gap-2 mt-6">
                          
                            <button className="flex-1 bg-white/10 backdrop-blur-xl border border-white/10 rounded-xl py-3 px-4 text-left transition-all duration-300 hover:bg-white hover:border-white group/email">
                               <div className="text-[9px] text-white/60 font-mono mb-1 tracking-wider group-hover/email:text-black/60 transition-colors duration-300">EMAIL</div>
-                              <div className="text-[10px] text-white font-mono font-semibold break-all group-hover/email:text-black transition-colors duration-300">BOO@PHANTOM.AGENCY</div>
+                              <div className="text-[10px] text-white font-mono font-semibold break-all group-hover/email:text-black transition-colors duration-300">{CONTACT_PAGE.cards[2].email}</div>
                            </button>
                            
                            <button className="flex-1 bg-white/10 backdrop-blur-xl border border-white/10 rounded-xl py-3 px-4 text-left transition-all duration-300 hover:bg-[#25D366] hover:border-[#25D366] group/wa">
                               <div className="text-[9px] text-white/60 font-mono mb-1 tracking-wider group-hover/wa:text-white/80 transition-colors duration-300">WHATSAPP</div>
-                              <div className="text-[10px] text-white font-mono font-semibold group-hover/wa:text-white transition-colors duration-300">+447982717018</div>
+                              <div className="text-[10px] text-white font-mono font-semibold group-hover/wa:text-white transition-colors duration-300">{CONTACT_PAGE.cards[2].whatsapp}</div>
                            </button>
                         </div>
                      </div>
