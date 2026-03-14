@@ -17,13 +17,13 @@ export const TIME_ZONES = [
       location: "INDIA, IN",
       timeZone: "Asia/Kolkata",
       label: "IST",
-      iconType: "moon", // ☾
+      iconType: "dot", // ●
    },
    {
       location: "NEW YORK, NY",
       timeZone: "America/New_York",
       label: "EST",
-      iconType: "dot", // ●
+      iconType: "moon", // ☾
    },
 ];
 
@@ -48,8 +48,62 @@ export const CONTACT_PAGE = {
          label: "Anything else",
          title: "Just saying hi.",
          image: "/assets/p2.jpg",
-         email: "BOO@PHANTOM.AGENCY",
-         whatsapp: "+447982717018",
+         email: "SINGHASHIRWAD2003@GMAIL.COM",
+         whatsapp: "+918421933430",
       },
    ],
 };
+
+export const PROJECTS_DATA = [
+   {
+      year: "2026",
+      projects: [
+         {
+            title: "Google Visitor Experience Guide",
+            tags: ["EXPERIENCE", "PHYSICAL", "EVENT", "TOOL"],
+            company: "Google",
+         },
+      ],
+   },
+   {
+      year: "2025",
+      projects: [
+         {
+            title: "Season's Treatings",
+            tags: ["EXPERIENCE", "3D", "AI", "SOCIAL"],
+            company: "Phantom",
+         },
+         {
+            title: "Stranger Things Walking Tour",
+            tags: ["EXPERIENCE", "3D", "EVENT", "EXPERIENTIAL"],
+            company: "Netflix",
+         },
+         {
+            title: "Google Cloud BigQuery",
+            tags: ["COMMUNICATION", "SOCIAL", "CAMPAIGN", "MOTION"],
+            company: "Google",
+         },
+         {
+            title: "Pixel For Travel",
+            tags: ["COMMUNICATION", "ILLUSTRATION", "CAMPAIGN"],
+            company: "Google",
+         },
+         {
+            title: "Don Julio World",
+            tags: ["COMMUNICATION", "AI", "EVENT"],
+            company: "Diageo",
+         },
+         {
+            title: "AI Quests",
+            tags: ["PRODUCT", "CAMPAIGN", "CONTENT", "GAME"],
+            company: "Google",
+         },
+      ],
+   },
+];
+
+export const BOTTOM_NAV_LINKS = [
+   { label: "Work", href: "/work" },
+   { label: "About", href: "/about" },
+   { label: "Careers", href: "/careers" },
+];

@@ -31,7 +31,7 @@ export default function NavBar() {
                           tz.iconType === "moon" ? (
                              <span className="text-[10px] transform scale-x-[-1] inline-block">☾</span>
                           ) : (
-                             <span className={`text-[10px] ${index === 0 ? "text-white" : "text-[#666]"}`}>●</span>
+                             <span className={`text-[10px] ${index === 0 ? "text-white animate-glow-pulse" : "text-[#666]"}`}>●</span>
                           )
                        }
                     />

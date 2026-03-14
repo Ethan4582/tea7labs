@@ -46,3 +46,18 @@ body {
       rgba(0, 0, 0, 0.75) 90%,
       rgba(0, 0, 0, 1) 100%);
 }
+
+@keyframes glow-pulse {
+  0%, 100% {
+    opacity: 1;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.8), 0 0 12px rgba(255, 255, 255, 0.5);
+  }
+  50% {
+    opacity: 0.4;
+    text-shadow: 0 0 2px rgba(255, 255, 255, 0.2);
+  }
+}
+
+.animate-glow-pulse {
+  animation: glow-pulse 2.5s ease-in-out infinite;
+}
