@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import NavBar from "../components/NavBar/NavBar";
+import BottomNav from "../components/NavBar/BottomNav";
 
 import { SITE_METADATA } from "../lib/content_data";
 
@@ -31,6 +32,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <NavBar />
+        <BottomNav />
         {children}
       </body>
     </html>

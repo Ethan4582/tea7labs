@@ -105,5 +105,5 @@ export const PROJECTS_DATA = [
 export const BOTTOM_NAV_LINKS = [
    { label: "Work", href: "/work" },
    { label: "About", href: "/about" },
-   { label: "Careers", href: "/careers" },
+   { label: "Contact", href: "/contact" },
 ];
