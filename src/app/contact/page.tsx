@@ -38,31 +38,27 @@ export default function ContactPage() {
       const tl = gsap.timeline();
       tlRef.current = tl;
 
-      tl.to(heading, { opacity: 1, duration: 1.0, ease: "power2.out" })
-         .to({}, { duration: 1.5 })
+      // Faster sequence: shorter durations and quicker transitions
+      tl.to(heading, { opacity: 1, duration: 0.6, ease: "power2.out" })
+         .to({}, { duration: 0.8 }) // Reduced wait time
          .to(heading, {
-            duration: 1,
+            duration: 1.2, // Faster diagonal movement
             ease: "power3.inOut",
-            onStart() {
+            top: () => {
                const label = letsTalkRef.current;
-               if (!label) return;
-               const r = label.getBoundingClientRect();
-               gsap.to(heading, {
-                  top: r.bottom + 4,
-                  left: r.left,
-                  xPercent: 0,
-                  yPercent: 0,
-                  scale: 1,
-                  duration: 1.6,
-                  ease: "power3.inOut",
-                  overwrite: true,
-                  onComplete: () => {
-                     gsap.set(heading, { clearProps: "all" });
-                     heading.style.opacity = "1";
-                     heading.style.position = "relative";
-                     setCardsVisible(true);
-                  },
-               });
+               return label ? label.getBoundingClientRect().bottom + 4 : "50%";
+            },
+            left: () => {
+               const label = letsTalkRef.current;
+               return label ? label.getBoundingClientRect().left : "50%";
+            },
+            xPercent: 0,
+            yPercent: 0,
+            onComplete: () => {
+               gsap.set(heading, { clearProps: "all" });
+               heading.style.opacity = "1";
+               heading.style.position = "relative";
+               setCardsVisible(true);
             },
          });
 
@@ -85,7 +81,7 @@ export default function ContactPage() {
             <Gallery />
          </div>
 
-    
+     
          <div className="absolute inset-0 z-10 backdrop-blur-md bg-black/30 pointer-events-none" />
 
       
@@ -98,7 +94,7 @@ export default function ContactPage() {
             </span>
          </Link>
 
-    
+     
          <div className="absolute inset-0 z-20 flex flex-col justify-center px-10 py-10 pointer-events-none">
 
           
@@ -112,8 +108,8 @@ export default function ContactPage() {
                </div>
                <h1
                   ref={headingRef}
-                  className="text-white text-[1.5rem] sm:text-[1.9rem] md:text-[2.4rem] leading-[1.15] tracking-tight font-bold text-left"
-                  style={{ fontFamily: "'Ballinger Mono', monospace", opacity: 0 }}
+                  className="text-white text-[1.5rem] sm:text-[1.9rem] md:text-[2.6rem] leading-[1.1] tracking-tight font-bold text-left"
+                  
                >
                   {CONTACT_PAGE.heading}
                </h1>

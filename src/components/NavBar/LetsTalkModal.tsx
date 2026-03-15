@@ -194,7 +194,7 @@ export default function LetsTalkModal({ isOpen, onClose }: LetsTalkModalProps) {
                         Hiring
                      </div>
                      <h3 className="text-white text-lg md:text-xl font-sans font-medium leading-snug mt-6 mb-auto">
-                        I'd like to join the team.
+                        I'd love to join the team.
                      </h3>
                      <div className="mt-6">
                         <button

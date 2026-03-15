@@ -6,7 +6,7 @@ import ProjectListView from "../components/ProjectListView";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Home() {
-  const [view, setView] = useState<"grid" | "list">("list"); // the image had list view as the default
+  const [view, setView] = useState<"grid" | "list">("grid"); // default layout updated to grid
 
   return (
     <main className="relative w-full h-[100svh] overflow-hidden bg-black text-white selection:bg-white selection:text-black">

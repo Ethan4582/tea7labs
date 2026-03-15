@@ -1,5 +1,5 @@
 export const SITE_METADATA = {
-   title: "TE7LABS",
+   title: "T7LABS",
    description: "CRAFTING OPEN-SOURCE INNOVATION & PREMIUM EXPERIENCES FOR DEVELOPERS.",
 };
 
@@ -35,13 +35,13 @@ export const CONTACT_PAGE = {
          type: "collaboration",
          label: "Collaboration",
          title: "I'm interested in working together.",
-         url: "https://x.com/SinghAshir65848",
+         url: "https://cal.com/t7labs ",
       },
       {
          type: "hiring",
-         label: "Hiring",
-         title: "I'd like to join the team.",
-         url: "https://drive.google.com/file/d/1HeCJcPd-Q9hqTWnfUVATOB3liYAVUh_V/view",
+         label: "Hire Me",
+         title: "I'd love to join your team.",
+         url: "https://ash-cv.vercel.app/",
       },
       {
          type: "other",
