@@ -1,169 +1,233 @@
+import { PROJECTS_DATA } from "./content_data";
+
 export interface Project {
    title: string;
    image: string;
+   Video?: string;
+  
    year: number;
+   Logo?: string;
+   Tags?: string[];
    href: string;
    slug: string;
    bgColor: string;
 }
 
+const getTags = (index: number) => {
+   const tagsSources = [
+      PROJECTS_DATA[0].projects[0].tags,
+      PROJECTS_DATA[1].projects[0].tags,
+      PROJECTS_DATA[1].projects[1].tags,
+      PROJECTS_DATA[1].projects[2].tags,
+      PROJECTS_DATA[1].projects[3].tags,
+      PROJECTS_DATA[1].projects[4].tags,
+      PROJECTS_DATA[1].projects[5].tags,
+   ];
+   return tagsSources[index % tagsSources.length];
+};
+
 export const projects: Project[] = [
    {
       title: "Motion Study",
-      image: "/assets/img1.jpeg",
+      image: "https://cdn.prod.website-files.com/691024ccc3cf40dbe1a814d3/69143c39ea364966d58a30d3_RedStripedCar.webp",
+      Video: "https://cdn.prod.website-files.com/68d154612c134abb70a4785a/68d5ca79fb6e9d6e3bbeb1fd_8683480-uhd_4096_2160_25fps-transcode.mp4",
+     
       year: 2024,
+      Logo: "",
+      Tags: getTags(0),
       href: "/projects/motion-study",
       slug: "motion-study",
       bgColor: "#2a2a2a",
    },
    {
       title: "Idle Form",
-      image: "/assets/img2.png",
+      image: "https://cdn.sanity.io/images/3fq51aaa/production/62100bfb6bef5c610fc5288538d3f48e4ec7b547-750x1248.jpg?w=1000&q=80&fm=webp",
+     
       year: 2023,
+      Logo: "",
+      Tags: getTags(1),
       href: "/projects/idle-form",
       slug: "idle-form",
       bgColor: "#1a1c29",
    },
    {
       title: "Blur Signal",
-      image: "/assets/img3.png",
+      image: "https://cdn.prod.website-files.com/691024ccc3cf40dbe1a814d3/69143cb2e17c5ef2b2e817ba_RedCar.webp",
+     
       year: 2024,
+      Logo: "",
+      Tags: getTags(2),
       href: "/projects/blur-signal",
       slug: "blur-signal",
       bgColor: "#2d1b1b",
    },
    {
       title: "Still Drift",
-      image: "/assets/img4.png",
+      image: "https://cdn.prod.website-files.com/691024ccc3cf40dbe1a814d3/6911c3142022816c46f7c2c7_68c4f1033205e4411493eccd_Future.webp",
+     
       year: 2023,
+      Logo: "",
+      Tags: getTags(3),
       href: "/projects/still-drift",
       slug: "still-drift",
       bgColor: "#1e3025",
    },
    {
       title: "Silent Horizon",
-      image: "/assets/img5.png",
+      image: "https://cdn.sanity.io/images/3fq51aaa/production/867e85eb3292195e4cdee3b47c91d589f5bf5cd2-750x1248.jpg?w=1000&q=80&fm=webp",
+     
       year: 2024,
+      Logo: "",
+      Tags: getTags(4),
       href: "/projects/silent-horizon",
       slug: "silent-horizon",
       bgColor: "#1c2136",
    },
    {
       title: "Neon Pulse",
-      image: "/assets/img6.png",
+      image: "https://cdn.sanity.io/images/3fq51aaa/production/69a7bd78a40fce7fd526fe0262b9d53e7ec91a04-750x1248.jpg?w=1000&q=80&fm=webp",
+     
       year: 2022,
+      Logo: "",
+      Tags: getTags(5),
       href: "/projects/neon-pulse",
       slug: "neon-pulse",
       bgColor: "#361c33",
    },
    {
       title: "Echo Frame",
-      image: "/assets/img7.png",
+      image: "https://cdn.sanity.io/images/3fq51aaa/production/71e4ccb611e79156fa49abd46767bd67bcdd8903-1500x1800.jpg",
+     
       year: 2023,
+      Logo: "",
+      Tags: getTags(6),
       href: "/projects/echo-frame",
       slug: "echo-frame",
       bgColor: "#2e2520",
    },
    {
       title: "Lunar Static",
-      image: "/assets/img8.png",
+      image: "https://cdn.sanity.io/images/3fq51aaa/production/4056c511dbe89e2003ab648fd1c9b94099dd8f9e-750x1248.jpg?w=1000&q=80&fm=webp",
+     
       year: 2024,
+      Logo: "",
+      Tags: getTags(0),
       href: "/projects/lunar-static",
       slug: "lunar-static",
       bgColor: "#282a30",
    },
    {
       title: "Crimson Fade",
-      image: "/assets/img9.png",
+      image: "https://cdn.sanity.io/images/3fq51aaa/production/98d75129913635d813f0af85dc7695e5da1c922f-750x1248.jpg?w=1000&q=80&fm=webp",
+     
       year: 2021,
+      Logo: "",
+      Tags: getTags(1),
       href: "/projects/crimson-fade",
       slug: "crimson-fade",
       bgColor: "#3c1818",
    },
    {
       title: "Golden Offset",
-      image: "/assets/img10.png",
+      image: "https://cdn.sanity.io/images/3fq51aaa/production/4e8c6ffb8843c38f37b7e73086d4e1dee8181bba-750x1248.jpg?w=1000&q=80&fm=webp",
+      Video: "https://cdn.sanity.io/files/3fq51aaa/production/1470de704f9fe305759603833de749288cf25969.mp4",
+    
       year: 2022,
+      Logo: "",
+      Tags: getTags(2),
       href: "/projects/golden-offset",
       slug: "golden-offset",
       bgColor: "#332d18",
    },
    {
       title: "Phantom Grid",
-      image: "/assets/img11.png",
+      image: "https://cdn.prod.website-files.com/699b6466d5f19893993a4bf2/699b6466d5f19893993a4f1a_Sunset-Serenity.webp",
+     
       year: 2024,
+      Logo: "",
+      Tags: getTags(3),
       href: "/projects/phantom-grid",
       slug: "phantom-grid",
       bgColor: "#14252a",
    },
    {
-      title: "Velvet Noise",
-      image: "/assets/img12.png",
-      year: 2023,
-      href: "/projects/velvet-noise",
-      slug: "velvet-noise",
-      bgColor: "#291629",
-   },
-   {
-      title: "Glass Spectrum",
-      image: "/assets/img13.png",
-      year: 2022,
-      href: "/projects/glass-spectrum",
-      slug: "glass-spectrum",
-      bgColor: "#162829",
-   },
-   {
       title: "Shadow Bloom",
-      image: "/assets/img14.png",
+      image: "https://cdn.prod.website-files.com/699b6466d5f19893993a4c2c/699b6466d5f19893993a4e88_work-4-5-p-1600.webp",
+     
       year: 2024,
+      Logo: "",
+      Tags: getTags(6),
       href: "/projects/shadow-bloom",
       slug: "shadow-bloom",
       bgColor: "#20222a",
    },
    {
       title: "Digital Mirage",
-      image: "/assets/img15.png",
+      image: "https://cdn.prod.website-files.com/6733e3fe5fe34349ad31f7bc/673b91ae01f8cbf4ed67f6a0_Works%20Images%2004-p-1080.jpg",
+      
       year: 2021,
+      Logo: "",
+      Tags: getTags(0),
       href: "/projects/digital-mirage",
       slug: "digital-mirage",
       bgColor: "#23261f",
    },
    {
       title: "Static Bloom",
-      image: "/assets/img16.png",
+      image: "https://cdn.prod.website-files.com/670d1e9ed09cfa371f29ab4d/670d28e1c0be0dd6c23fec75_Frame%201.webp",
+      Video: "",
+    
       year: 2023,
+      Logo: "",
+      Tags: getTags(1),
       href: "/projects/static-bloom",
       slug: "static-bloom",
       bgColor: "#2a1e1d",
    },
    {
       title: "Midnight Vector",
-      image: "/assets/img17.png",
+      image: "https://cdn.prod.website-files.com/670d1e9ed09cfa371f29ab4d/670d6a0d0364f94e4dc4913d_Frame%209-p-500.webp",
+      Video: "",
+     
       year: 2024,
+      Logo: "",
+      Tags: getTags(2),
       href: "/projects/midnight-vector",
       slug: "midnight-vector",
       bgColor: "#16182c",
    },
    {
       title: "Silver Current",
-      image: "/assets/img18.png",
+      image: "https://framerusercontent.com/images/pb7IVmf5yp2fnj15Jbf5EPgdZk.jpg",
+      Video: "",
+     
       year: 2022,
+      Logo: "",
+      Tags: getTags(3),
       href: "/projects/silver-current",
       slug: "silver-current",
       bgColor: "#262b32",
    },
    {
       title: "Urban Flux",
-      image: "/assets/img19.png",
+      image: "https://framerusercontent.com/images/RByV4hMsxJRrrY0riO6AjrY2fM.jpg",
+      Video: "",
+      
       year: 2023,
+      Logo: "",
+      Tags: getTags(4),
       href: "/projects/urban-flux",
       slug: "urban-flux",
       bgColor: "#24201c",
    },
    {
       title: "Aurora Shift",
-      image: "/assets/img20.png",
+      image: "https://framerusercontent.com/images/NttmaohG1P69PNzRiBuwFbwDw0.webp",
+      Video: "",
+      
       year: 2024,
+      Logo: "",
+      Tags: getTags(5),
       href: "/projects/aurora-shift",
       slug: "aurora-shift",
       bgColor: "#1a2a1a",

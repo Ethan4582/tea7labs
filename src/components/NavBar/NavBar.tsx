@@ -22,7 +22,7 @@ export default function NavBar() {
                className="text-white text-lg sm:text-2xl font-bold tracking-tighter hover:opacity-80 transition-opacity"
                style={{ fontFamily: "var(--font-instrument-serif), serif" }}
             >
-               T7_LABS®
+               T7_LABS
             </a>
          </div>
 

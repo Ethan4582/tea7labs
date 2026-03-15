@@ -1,3 +1,4 @@
+
 import * as THREE from "three";
 import { projects, type Project } from "../lib/asset_data";
 import { vertexShader, fragmentShader } from "./shadder";
@@ -50,6 +51,8 @@ const DRAG_CURVATURE = 0.24;
 let textTextures: THREE.CanvasTexture[] = [];
 let animationFrameId: number;
 
+
+
 const rgbaToArray = (rgba: string): number[] => {
    const match = rgba.match(/rgba?\(([^)]+)\)/);
    if (!match) return [1, 1, 1, 1];
@@ -60,30 +63,107 @@ const rgbaToArray = (rgba: string): number[] => {
       );
 };
 
-const createTextTexture = (title: string, year: number): THREE.CanvasTexture => {
+
+
+const CELL_TEX_SIZE = 1024; // square canvas representing one full cell
+
+const createTextTexture = (project: Project): THREE.CanvasTexture => {
+   const S = CELL_TEX_SIZE;
    const canvas = document.createElement("canvas");
-   canvas.width = 2048;
-   canvas.height = 256;
+   canvas.width = S;
+   canvas.height = S;
    const ctx = canvas.getContext("2d");
    if (!ctx) throw new Error("Could not get 2D context");
 
-   ctx.clearRect(0, 0, 2048, 256);
-   ctx.font = "80px IBM Plex Mono";
-   ctx.fillStyle = config.textColor;
-   ctx.textBaseline = "middle";
-   ctx.imageSmoothingEnabled = false;
+   ctx.clearRect(0, 0, S, S);
 
-   ctx.textAlign = "left";
-   ctx.fillText(title.toUpperCase(), 30, 128);
+   const pad = 28;
+   const dimColor  = "rgba(160, 160, 160, 0.90)";
+   const tagBg     = "rgba(30, 30, 30, 0.85)";
+   const tagText   = "rgba(200, 200, 200, 1)";
+   const tagBorder = "rgba(80, 80, 80, 0.9)";
+
+   // ── Font stack ────────────────────────────────────────────────────────────
+   const monoFont = `"IBM Plex Mono", "Courier New", monospace`;
+
+   // TOP-LEFT is reserved for the logo image (set via project.Logo URL).
+   // Text fallback is intentionally left empty here.
+
+   // ── TOP-RIGHT: Project title ──────────────────────────────────────────────
+   ctx.font = `500 36px ${monoFont}`;
+   ctx.fillStyle = dimColor;
    ctx.textAlign = "right";
-   ctx.fillText(year.toString().toUpperCase(), 2048 - 30, 128);
+   ctx.textBaseline = "top";
+   // Truncate title if too long
+   const maxTitleW = S - pad * 2;
+   let titleStr = project.title.toUpperCase();
+   ctx.font = `500 30px ${monoFont}`;
+   while (ctx.measureText(titleStr).width > maxTitleW && titleStr.length > 4) {
+      titleStr = titleStr.slice(0, -2);
+   }
+   ctx.fillText(titleStr, S - pad, pad);
 
+   // ── BOTTOM-LEFT: Tags as pills ────────────────────────────────────────────
+   if (project.Tags && project.Tags.length > 0) {
+      const tagFontSize = 22;
+      ctx.font = `500 ${tagFontSize}px ${monoFont}`;
+      const pillH = 36;
+      const pillPadX = 18;
+      const pillGap = 10;
+      const bottomY = S - pad - pillH;
+
+      let curX = pad;
+      project.Tags.forEach((tag) => {
+         const label = tag.toUpperCase();
+         const textW = ctx.measureText(label).width;
+         const pillW = textW + pillPadX * 2;
+
+         // Pill background
+         ctx.beginPath();
+         const r = pillH / 2;
+         ctx.moveTo(curX + r, bottomY);
+         ctx.lineTo(curX + pillW - r, bottomY);
+         ctx.arcTo(curX + pillW, bottomY, curX + pillW, bottomY + pillH, r);
+         ctx.lineTo(curX + pillW, bottomY + r);
+         ctx.arcTo(curX + pillW, bottomY + pillH, curX + pillW - r, bottomY + pillH, r);
+         ctx.lineTo(curX + r, bottomY + pillH);
+         ctx.arcTo(curX, bottomY + pillH, curX, bottomY + r, r);
+         ctx.lineTo(curX, bottomY + r);
+         ctx.arcTo(curX, bottomY, curX + r, bottomY, r);
+         ctx.closePath();
+
+         ctx.fillStyle = tagBg;
+         ctx.fill();
+         ctx.strokeStyle = tagBorder;
+         ctx.lineWidth = 1.5;
+         ctx.stroke();
+
+         // Tag text
+         ctx.fillStyle = tagText;
+         ctx.textAlign = "left";
+         ctx.textBaseline = "middle";
+         ctx.fillText(label, curX + pillPadX, bottomY + pillH / 2);
+
+         curX += pillW + pillGap;
+         // Stop if running out of space
+         if (curX > S - pad * 3) return;
+      });
+   }
+
+   // ── BOTTOM-RIGHT: Year ────────────────────────────────────────────────────
+   ctx.font = `500 30px ${monoFont}`;
+   ctx.fillStyle = dimColor;
+   ctx.textAlign = "right";
+   ctx.textBaseline = "bottom";
+   ctx.fillText(project.year.toString(), S - pad, S - pad);
+
+   // ── Build texture ─────────────────────────────────────────────────────────
    const texture = new THREE.CanvasTexture(canvas);
    Object.assign(texture, {
       wrapS: THREE.ClampToEdgeWrapping,
       wrapT: THREE.ClampToEdgeWrapping,
-      minFilter: THREE.NearestFilter,
-      magFilter: THREE.NearestFilter,
+      minFilter: THREE.LinearFilter,
+      magFilter: THREE.LinearFilter,
       flipY: false,
       generateMipmaps: false,
       format: THREE.RGBAFormat,
@@ -92,9 +172,11 @@ const createTextTexture = (title: string, year: number): THREE.CanvasTexture => 
    return texture;
 };
 
+
 const createTextureAtlas = (textures: THREE.Texture[], isText = false): THREE.CanvasTexture => {
    const atlasSize = Math.ceil(Math.sqrt(textures.length));
-   const textureSize = 512;
+   // Text overlay tiles must match CELL_TEX_SIZE so all 4 corners render correctly
+   const textureSize = isText ? CELL_TEX_SIZE : 512;
 
    const canvas = document.createElement("canvas");
    canvas.width = canvas.height = atlasSize * textureSize;
@@ -104,20 +186,35 @@ const createTextureAtlas = (textures: THREE.Texture[], isText = false): THREE.Ca
    if (isText) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
    } else {
-      ctx.fillStyle = "black";
+      ctx.fillStyle = "#111";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
    }
 
-   textures.forEach((texture, index) => {
-      const x = (index % atlasSize) * textureSize;
-      const y = Math.floor(index / atlasSize) * textureSize;
+   // Fill ALL atlasSize² slots — wrap textures[] so no slot is ever black/empty.
+   // This eliminates empty cards regardless of how many projects vs atlas slots.
+   const totalSlots = atlasSize * atlasSize;
+   for (let slot = 0; slot < totalSlots; slot++) {
+      // Wrap: slot 17 uses texture 0, slot 18 uses texture 1, etc.
+      const texture = textures[slot % textures.length];
+      const x = (slot % atlasSize) * textureSize;
+      const y = Math.floor(slot / atlasSize) * textureSize;
 
-      if (isText && texture.image) {
-         ctx.drawImage(texture.image as HTMLCanvasElement, x, y, textureSize, textureSize);
-      } else if (!isText && texture.image) {
-         ctx.drawImage(texture.image as HTMLImageElement, x, y, textureSize, textureSize);
+      if (!texture?.image) continue;
+
+      try {
+         if (isText) {
+            ctx.drawImage(texture.image as HTMLCanvasElement, x, y, textureSize, textureSize);
+         } else {
+            ctx.drawImage(texture.image as HTMLImageElement, x, y, textureSize, textureSize);
+         }
+      } catch {
+         // CORS-tainted image — paint a neutral dark fallback so slot is never black
+         if (!isText) {
+            ctx.fillStyle = "#1c1c2e";
+            ctx.fillRect(x, y, textureSize, textureSize);
+         }
       }
-   });
+   }
 
    const atlasTexture = new THREE.CanvasTexture(canvas);
    Object.assign(atlasTexture, {
@@ -133,19 +230,48 @@ const createTextureAtlas = (textures: THREE.Texture[], isText = false): THREE.Ca
 
 const loadTextures = (): Promise<THREE.Texture[]> => {
    const textureLoader = new THREE.TextureLoader();
+   // Enable cross-origin for external CDN URLs
+   textureLoader.crossOrigin = "anonymous";
    const imageTextures: THREE.Texture[] = [];
    let loadedCount = 0;
 
    return new Promise((resolve) => {
-      projects.forEach((project: Project) => {
+      projects.forEach((project: Project, projectIndex: number) => {
+         // Push a placeholder first so the index stays aligned with projectIndex
+         const placeholder = new THREE.Texture();
+         imageTextures.push(placeholder);
+         textTextures.push(createTextTexture(project));
+
          const texture = textureLoader.load(
             project.image,
             () => {
+               // Swap the loaded texture into the correct slot
+               imageTextures[projectIndex] = texture;
                if (++loadedCount === projects.length) resolve(imageTextures);
             },
             undefined,
-            (err) => {
-               console.warn(`Failed to load image: ${project.image}`, err);
+            () => {
+               // Image failed — paint a solid bgColor canvas so slot is never black
+               const fb = document.createElement("canvas");
+               fb.width = fb.height = 64;
+               const ctx = fb.getContext("2d");
+               if (ctx) {
+                  ctx.fillStyle = project.bgColor || "#1a1a2e";
+                  ctx.fillRect(0, 0, 64, 64);
+                  // Draw project title in center so it's visually distinct
+                  ctx.fillStyle = "rgba(255,255,255,0.3)";
+                  ctx.font = "bold 10px sans-serif";
+                  ctx.textAlign = "center";
+                  ctx.fillText(project.title.slice(0, 8).toUpperCase(), 32, 36);
+               }
+               const fallback = new THREE.CanvasTexture(fb);
+               Object.assign(fallback, {
+                  wrapS: THREE.ClampToEdgeWrapping,
+                  wrapT: THREE.ClampToEdgeWrapping,
+                  minFilter: THREE.LinearFilter,
+                  magFilter: THREE.LinearFilter,
+               });
+               imageTextures[projectIndex] = fallback;
                if (++loadedCount === projects.length) resolve(imageTextures);
             }
          );
@@ -156,12 +282,10 @@ const loadTextures = (): Promise<THREE.Texture[]> => {
             minFilter: THREE.LinearFilter,
             magFilter: THREE.LinearFilter,
          });
-
-         imageTextures.push(texture);
-         textTextures.push(createTextTexture(project.title, project.year));
       });
    });
 };
+
 
 const updateMousePosition = (event: MouseEvent) => {
    if (!renderer) return;
@@ -235,7 +359,7 @@ const onPointerUp = (event: MouseEvent | TouchEvent) => {
          const screenY = -(((endY - rect.top) / rect.height) * 2 - 1);
 
          const radius = Math.sqrt(screenX * screenX + screenY * screenY);
-         const distortion = 1.0 - 0.08 * radius * radius;
+         const distortion = 1.1 - 0.08 * radius * radius;
 
          const worldX =
             screenX * distortion * (rect.width / rect.height) * zoomLevel +
@@ -364,7 +488,9 @@ export const cleanup = () => {
    targetZoom = 1.0;
    curvatureLevel = BASE_CURVATURE;
    targetCurvature = BASE_CURVATURE;
+
 };
+
 
 const animate = () => {
    animationFrameId = requestAnimationFrame(animate);
@@ -384,6 +510,7 @@ const animate = () => {
       renderer.render(scene, camera);
    }
 };
+
 
 export const init = async () => {
    const container = document.getElementById("gallery");
@@ -421,9 +548,7 @@ export const init = async () => {
       uBorderColor: {
          value: new THREE.Vector4(...rgbaToArray(config.borderColor)),
       },
-      uHoverColor: {
-         value: new THREE.Vector4(...rgbaToArray(config.hoverColor)),
-      },
+
       uBackgroundColor: {
          value: new THREE.Vector4(...rgbaToArray(config.backgroundColor)),
       },

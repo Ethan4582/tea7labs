@@ -1,125 +1,164 @@
 export const vertexShader = `
   varying vec2 vUv;
-
   void main() {
     vUv = uv;
-
     gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
   }
 `;
 
 export const fragmentShader = `
-  uniform vec2 uOffset;
-  uniform vec2 uResolution;
-  uniform vec4 uBorderColor;
-  uniform vec4 uHoverColor;
-  uniform vec4 uBackgroundColor;
-  uniform vec2 uMousePos;
+  uniform vec2  uOffset;
+  uniform vec2  uResolution;
+  uniform vec4  uBorderColor;
+  uniform vec4  uBackgroundColor;
+  uniform vec2  uMousePos;
   uniform float uZoom;
+  uniform float uCurvature;
   uniform float uCellSize;
   uniform float uTextureCount;
   uniform sampler2D uImageAtlas;
   uniform sampler2D uTextAtlas;
   varying vec2 vUv;
 
+  // ── IQ-style hash: sin-free, stable on all GPUs at any coordinate ────────────
+  float cellHash(vec2 p) {
+    p = fract(p * vec2(0.1031, 0.1030));
+    p += dot(p, p.yx + 33.33);
+    return fract((p.x + p.y) * p.x);
+  }
+
+  // ── Two-pass Gaussian blur on the image atlas ─────────────────────────────
+  vec3 blurAtlas(vec2 uv, float r) {
+    vec3 c  = texture2D(uImageAtlas, uv).rgb * 4.0;
+    c += texture2D(uImageAtlas, uv + vec2( r,  0.)).rgb * 2.0;
+    c += texture2D(uImageAtlas, uv + vec2(-r,  0.)).rgb * 2.0;
+    c += texture2D(uImageAtlas, uv + vec2( 0.,  r)).rgb * 2.0;
+    c += texture2D(uImageAtlas, uv + vec2( 0., -r)).rgb * 2.0;
+    c += texture2D(uImageAtlas, uv + vec2( r,  r)).rgb;
+    c += texture2D(uImageAtlas, uv + vec2(-r,  r)).rgb;
+    c += texture2D(uImageAtlas, uv + vec2( r, -r)).rgb;
+    c += texture2D(uImageAtlas, uv + vec2(-r, -r)).rgb;
+    float r2 = r * 2.0;
+    c += texture2D(uImageAtlas, uv + vec2( r2,  0.)).rgb * 0.5;
+    c += texture2D(uImageAtlas, uv + vec2(-r2,  0.)).rgb * 0.5;
+    c += texture2D(uImageAtlas, uv + vec2( 0.,  r2)).rgb * 0.5;
+    c += texture2D(uImageAtlas, uv + vec2( 0., -r2)).rgb * 0.5;
+    return c / 18.0;
+  }
+
   void main() {
     vec2 screenUV = (vUv - 0.5) * 2.0;
-
     float radius = length(screenUV);
     float distortion = 1.1 - 0.08 * radius * radius;
-    vec2 distortedUV = screenUV * distortion;
-
-    vec2 aspectRatio = vec2(uResolution.x / uResolution.y, 1.0);
-    vec2 worldCoord = distortedUV * aspectRatio;
-
-    worldCoord *= uZoom;
-    worldCoord += uOffset;
+    vec2 worldCoord = screenUV * distortion * vec2(uResolution.x / uResolution.y, 1.0);
+    worldCoord = worldCoord * uZoom + uOffset;
 
     vec2 cellPos = worldCoord / uCellSize;
-    vec2 cellId = floor(cellPos);
-    vec2 cellUV = fract(cellPos);
+    vec2 cellId  = floor(cellPos);
+    vec2 cellUV  = fract(cellPos);
 
-    vec2 mouseScreenUV = (uMousePos / uResolution) * 2.0 - 1.0;
-    mouseScreenUV.y = -mouseScreenUV.y;
+    // ── Mouse hover ────────────────────────────────────────────────────────────
+    vec2 mUV = (uMousePos / uResolution) * 2.0 - 1.0;
+    mUV.y = -mUV.y;
+    float mRad = length(mUV);
+    vec2 mWorld = mUV * (1.1 - 0.08 * mRad * mRad) * vec2(uResolution.x / uResolution.y, 1.0);
+    mWorld = mWorld * uZoom + uOffset;
+    vec2 mouseCellId = floor(mWorld / uCellSize);
 
-    float mouseRadius = length(mouseScreenUV);
-    float mouseDistortion = 1.0 - 0.08 * mouseRadius * mouseRadius;
-    vec2 mouseDistortedUV = mouseScreenUV * mouseDistortion;
-    vec2 mouseWorldCoord = mouseDistortedUV * aspectRatio;
+    float cellDist = length((cellId + 0.5) - (mouseCellId + 0.5));
+    float hoverI   = (uMousePos.x >= 0.0) ? 1.0 - smoothstep(0.4, 0.7, cellDist) : 0.0;
 
-    mouseWorldCoord *= uZoom;
-    mouseWorldCoord += uOffset;
+    // ── Texture index ─────────────────────────────────────────────────────────
+    // All atlasSize² slots are now filled (JS wraps textures[] to fill every slot).
+    // Hash into the full atlas slot range — guaranteed valid, no empty cells possible.
+    float atlasSize = ceil(sqrt(uTextureCount));
+    float totalSlots = atlasSize * atlasSize;
+    float texIndex  = floor(cellHash(cellId) * totalSlots);
+    texIndex = mod(clamp(texIndex, 0.0, totalSlots - 1.0), totalSlots);
+    vec2  atlasPos  = vec2(mod(texIndex, atlasSize), floor(texIndex / atlasSize));
 
-    vec2 mouseCellPos = mouseWorldCoord / uCellSize;
-    vec2 mouseCellId = floor(mouseCellPos);
-
-    vec2 cellCenter = cellId + 0.5;
-    vec2 mouseCellCenter = mouseCellId + 0.5;
-    float cellDistance = length(cellCenter - mouseCellCenter);
-    float hoverIntensity = 1.0 - smoothstep(0.4, 0.7, cellDistance);
-    bool isHovered = hoverIntensity > 0.0 && uMousePos.x >= 0.0;
-
-    vec3 backgroundColor = uBackgroundColor.rgb;
-    if (isHovered) {
-      backgroundColor = mix(uBackgroundColor.rgb, uHoverColor.rgb, hoverIntensity * uHoverColor.a);
-    }
-
-    float lineWidth = 0.005;
-    float gridX = smoothstep(0.0, lineWidth, cellUV.x) * smoothstep(0.0, lineWidth, 1.0 - cellUV.x);
-    float gridY = smoothstep(0.0, lineWidth, cellUV.y) * smoothstep(0.0, lineWidth, 1.0 - cellUV.y);
-    float gridMask = gridX * gridY;
-
-    float imageSize = 0.6;
+    // ── Center image geometry ──────────────────────────────────────────────────
+    float imageSize   = 0.62;
     float imageBorder = (1.0 - imageSize) * 0.5;
+    vec2  imageUV     = (cellUV - imageBorder) / imageSize;
+    float edgeS       = 0.012;
+    vec2  imgMask     = smoothstep(-edgeS, edgeS, imageUV) * smoothstep(-edgeS, edgeS, 1.0 - imageUV);
+    float imageAlpha  = imgMask.x * imgMask.y;
+    bool  inImage     = imageUV.x >= 0.0 && imageUV.x <= 1.0 && imageUV.y >= 0.0 && imageUV.y <= 1.0;
 
-    vec2 imageUV = (cellUV - imageBorder) / imageSize;
+    // ── LAYER 1: Base background ───────────────────────────────────────────────
+    vec3 color = uBackgroundColor.rgb;
 
-    float edgeSmooth = 0.01;
-    vec2 imageMask = smoothstep(-edgeSmooth, edgeSmooth, imageUV) *
-      smoothstep(-edgeSmooth, edgeSmooth, 1.0 - imageUV);
-    float imageAlpha = imageMask.x * imageMask.y;
+    // ── LAYER 2: Hover — frosted glass blur ───────────────────────────────────
+    if (hoverI > 0.0) {
+      // Scale image outward to fill cell as blurred backdrop
+      vec2 bgUV = (cellUV - 0.5) / 1.8 + 0.5;
+      bgUV = clamp(bgUV, 0.0, 1.0);
 
-    bool inImageArea = imageUV.x >= 0.0 && imageUV.x <= 1.0 && imageUV.y >= 0.0 && imageUV.y <= 1.0;
+      vec2 bgAtlasUV = (atlasPos + bgUV) / atlasSize;
+      bgAtlasUV.y = 1.0 - bgAtlasUV.y;
 
-    float textHeight = 0.08;
-    float textY = 0.88;
+      vec3 blurred = blurAtlas(bgAtlasUV, 0.04 / atlasSize);
 
-    bool inTextArea = cellUV.x >= 0.05 && cellUV.x <= 0.95 && cellUV.y >= textY && cellUV.y <= textY + textHeight;
+      // Moderate desaturation — frosted glass mutes colors
+      float luma = dot(blurred, vec3(0.299, 0.587, 0.114));
+      blurred = mix(blurred, vec3(luma), 0.35);
 
-    float texIndex = mod(cellId.x + cellId.y * 3.0, uTextureCount);
+      // Cool silver-grey tint to match reference
+      vec3 frostTint = vec3(0.55, 0.57, 0.60);
+      vec3 frosted = mix(blurred, frostTint, 0.30);
+      frosted *= 1.1;
 
-    vec3 color = backgroundColor;
-
-    if (inImageArea && imageAlpha > 0.0) {
-      float atlasSize = ceil(sqrt(uTextureCount));
-      vec2 atlasPos = vec2(mod(texIndex, atlasSize), floor(texIndex / atlasSize));
-      vec2 atlasUV = (atlasPos + imageUV) / atlasSize;
-      atlasUV.y = 1.0 - atlasUV.y;
-
-      vec3 imageColor = texture2D(uImageAtlas, atlasUV).rgb;
-      color = mix(color, imageColor, imageAlpha);
+      color = mix(color, frosted, hoverI * 0.92);
     }
 
-    if (inTextArea) {
-      vec2 textCoord = vec2((cellUV.x - 0.05) / 0.9, (cellUV.y - textY) / textHeight);
-      textCoord.y = 1.0 - textCoord.y;
+    // ── LAYER 3: Sharp center card image ──────────────────────────────────────
+    if (inImage && imageAlpha > 0.0) {
+      vec2 sUV = (atlasPos + imageUV) / atlasSize;
+      sUV.y = 1.0 - sUV.y;
+      vec3 imgColor = texture2D(uImageAtlas, sUV).rgb;
 
-      float atlasSize = ceil(sqrt(uTextureCount));
-      vec2 atlasPos = vec2(mod(texIndex, atlasSize), floor(texIndex / atlasSize));
-      vec2 atlasUV = (atlasPos + textCoord) / atlasSize;
-
-      vec4 textColor = texture2D(uTextAtlas, atlasUV);
-
-      vec3 textBgColor = backgroundColor;
-      color = mix(textBgColor, textColor.rgb, textColor.a);
+      float shadow = smoothstep(0.0, 0.06, imageUV.x) * smoothstep(0.0, 0.06, 1.0 - imageUV.x)
+                   * smoothstep(0.0, 0.06, imageUV.y) * smoothstep(0.0, 0.06, 1.0 - imageUV.y);
+      imgColor *= mix(0.75, 1.0, shadow);
+      color = mix(color, imgColor, imageAlpha);
     }
 
-    vec3 borderRGB = uBorderColor.rgb;
-    float borderAlpha = uBorderColor.a;
-    color = mix(color, borderRGB, (1.0 - gridMask) * borderAlpha);
+    // ── LAYER 4: Text overlay — always topmost ─────────────────────────────────
+    vec2 overlayUV = (atlasPos + cellUV) / atlasSize;
+    overlayUV.y = 1.0 - overlayUV.y;
+    vec4 overlay = texture2D(uTextAtlas, overlayUV);
+    color = mix(color, overlay.rgb, overlay.a);
 
+    // ── Grid border ────────────────────────────────────────────────────────────
+    float lw = 0.006;
+    float gx = smoothstep(0.0, lw, cellUV.x) * smoothstep(0.0, lw, 1.0 - cellUV.x);
+    float gy = smoothstep(0.0, lw, cellUV.y) * smoothstep(0.0, lw, 1.0 - cellUV.y);
+    color = mix(color, uBorderColor.rgb, (1.0 - gx * gy) * uBorderColor.a);
+
+    // ── Edge vignette ──────────────────────────────────────────────────────────
     float fade = 1.0 - smoothstep(0.4, 1.6, radius);
-
     gl_FragColor = vec4(color * fade, 1.0);
   }
 `;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
