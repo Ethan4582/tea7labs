@@ -76,15 +76,15 @@ export default function ContactPage() {
 
    return (
       <main className="relative w-[100vw] h-[100svh] overflow-hidden bg-black text-white">
-       
+
          <div className="absolute inset-0 z-0 pointer-events-none">
             <Gallery />
          </div>
 
-     
+
          <div className="absolute inset-0 z-10 backdrop-blur-md bg-black/30 pointer-events-none" />
 
-      
+
          <Link
             href="/"
             className="absolute top-6 right-6 z-[400] w-12 h-12 rounded-full border border-white/20 bg-white/10 backdrop-blur-md flex items-center justify-center text-white/70 hover:bg-white/20 hover:border-white/40 transition-all duration-300 group"
@@ -94,10 +94,10 @@ export default function ContactPage() {
             </span>
          </Link>
 
-     
+
          <div className="absolute inset-0 z-20 flex flex-col justify-center px-10 py-10 pointer-events-none">
 
-          
+
             <div className="w-full max-w-6xl mx-auto mb-8 pointer-events-auto">
                <div
                   ref={letsTalkRef}
@@ -109,20 +109,20 @@ export default function ContactPage() {
                <h1
                   ref={headingRef}
                   className="text-white text-[1.5rem] sm:text-[1.9rem] md:text-[2.6rem] leading-[1.1] tracking-tight font-bold text-left"
-                  
+
                >
                   {CONTACT_PAGE.heading}
                </h1>
             </div>
 
-       
+
             {cardsVisible && (
                <div
                   ref={cardsRef}
                   className="w-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-4 pointer-events-auto"
                   style={{ gridAutoRows: "380px", opacity: 0 }}
                >
-               
+
                   <div
                      className="bg-white/[0.04] backdrop-blur-xl border border-white/[0.06] p-8 flex flex-col overflow-hidden group cursor-pointer hover:bg-white/[0.07] transition-all duration-500"
                      onClick={() => window.open(CONTACT_PAGE.cards[0].url, "_blank")}
@@ -144,7 +144,7 @@ export default function ContactPage() {
                      </div>
                   </div>
 
-                 
+
                   <div
                      className="bg-white/[0.04] backdrop-blur-xl border border-white/[0.06] p-8 flex flex-col overflow-hidden group cursor-pointer hover:bg-white/[0.07] transition-all duration-500"
                      onClick={() => window.open(CONTACT_PAGE.cards[1].url, "_blank")}
@@ -185,12 +185,12 @@ export default function ContactPage() {
                            {CONTACT_PAGE.cards[2].title}
                         </h3>
                         <div className="flex gap-2 mt-6">
-                         
+
                            <button className="flex-1 bg-white/10 backdrop-blur-xl border border-white/10 rounded-xl py-3 px-4 text-left transition-all duration-300 hover:bg-white hover:border-white group/email">
                               <div className="text-[9px] text-white/60 font-mono mb-1 tracking-wider group-hover/email:text-black/60 transition-colors duration-300">EMAIL</div>
                               <div className="text-[10px] text-white font-mono font-semibold break-all group-hover/email:text-black transition-colors duration-300">{CONTACT_PAGE.cards[2].email}</div>
                            </button>
-                           
+
                            <button className="flex-1 bg-white/10 backdrop-blur-xl border border-white/10 rounded-xl py-3 px-4 text-left transition-all duration-300 hover:bg-[#25D366] hover:border-[#25D366] group/wa">
                               <div className="text-[9px] text-white/60 font-mono mb-1 tracking-wider group-hover/wa:text-white/80 transition-colors duration-300">WHATSAPP</div>
                               <div className="text-[10px] text-white font-mono font-semibold group-hover/wa:text-white transition-colors duration-300">{CONTACT_PAGE.cards[2].whatsapp}</div>

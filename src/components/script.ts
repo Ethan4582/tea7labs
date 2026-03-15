@@ -40,6 +40,13 @@ let mousePosition = { x: -1, y: -1 };
 let zoomLevel = 1.0;
 let targetZoom = 1.0;
 
+// Curvature — 0.22 at rest, increases to 0.38 while dragging/scrolling
+let curvatureLevel = 0.22;
+let targetCurvature = 0.24;
+
+const BASE_CURVATURE = 0.22;
+const DRAG_CURVATURE = 0.24;
+
 let textTextures: THREE.CanvasTexture[] = [];
 let animationFrameId: number;
 
@@ -178,6 +185,7 @@ const startDrag = (x: number, y: number) => {
    previousMouse.y = y;
 
    setTimeout(() => isDragging && (targetZoom = config.zoomLevel), 150);
+   targetCurvature = DRAG_CURVATURE;
 };
 
 const onPointerDown = (e: MouseEvent) => startDrag(e.clientX, e.clientY);
@@ -215,6 +223,7 @@ const onPointerUp = (event: MouseEvent | TouchEvent) => {
    const gallery = document.getElementById("gallery");
    if (gallery) gallery.classList.remove("dragging");
    targetZoom = 1.0;
+   targetCurvature = BASE_CURVATURE;
 
    if (isClick && Date.now() - clickStartTime < 200) {
       const endX = 'clientX' in event ? event.clientX : (event as TouchEvent).changedTouches?.[0]?.clientX;
@@ -353,6 +362,8 @@ export const cleanup = () => {
    mousePosition = { x: -1, y: -1 };
    zoomLevel = 1.0;
    targetZoom = 1.0;
+   curvatureLevel = BASE_CURVATURE;
+   targetCurvature = BASE_CURVATURE;
 };
 
 const animate = () => {
@@ -361,10 +372,12 @@ const animate = () => {
    offset.x += (targetOffset.x - offset.x) * config.lerpFactor;
    offset.y += (targetOffset.y - offset.y) * config.lerpFactor;
    zoomLevel += (targetZoom - zoomLevel) * config.lerpFactor;
+   curvatureLevel += (targetCurvature - curvatureLevel) * config.lerpFactor;
 
    if (plane?.material.uniforms) {
       plane.material.uniforms.uOffset.value.set(offset.x, offset.y);
       plane.material.uniforms.uZoom.value = zoomLevel;
+      plane.material.uniforms.uCurvature.value = curvatureLevel;
    }
 
    if (renderer && scene && camera) {
@@ -416,6 +429,7 @@ export const init = async () => {
       },
       uMousePos: { value: new THREE.Vector2(-1, -1) },
       uZoom: { value: 1.0 },
+      uCurvature: { value: BASE_CURVATURE },
       uCellSize: { value: config.cellSize },
       uTextureCount: { value: projects.length },
       uImageAtlas: { value: imageAtlas },

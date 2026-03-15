@@ -26,7 +26,7 @@ export const fragmentShader = `
     vec2 screenUV = (vUv - 0.5) * 2.0;
 
     float radius = length(screenUV);
-    float distortion = 1.0 - 0.08 * radius * radius;
+    float distortion = 1.1 - 0.08 * radius * radius;
     vec2 distortedUV = screenUV * distortion;
 
     vec2 aspectRatio = vec2(uResolution.x / uResolution.y, 1.0);
@@ -118,7 +118,7 @@ export const fragmentShader = `
     float borderAlpha = uBorderColor.a;
     color = mix(color, borderRGB, (1.0 - gridMask) * borderAlpha);
 
-    float fade = 1.0 - smoothstep(1.2, 1.8, radius);
+    float fade = 1.0 - smoothstep(0.4, 1.6, radius);
 
     gl_FragColor = vec4(color * fade, 1.0);
   }
