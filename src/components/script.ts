@@ -509,7 +509,7 @@ const animate = () => {
    curvatureLevel += (targetCurvature - curvatureLevel) * config.lerpFactor;
 
    const elapsed = Date.now() - startTime;
-   if (elapsed > 30000 && !isFlattened) {
+   if (elapsed > 300000 && !isFlattened) {
       isFlattened = true;
       // Fade out curvature and adjust zoom for ~3.5 cards across
       targetCurvature = 0.0;
