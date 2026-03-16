@@ -1,16 +1,29 @@
 import { PROJECTS_DATA } from "./content_data";
 
+export interface FeatureItem {
+   label: string;
+   isLink?: boolean;
+   link?: string;
+}
+
 export interface Project {
    title: string;
    image: string;
    Video?: string;
-  
    year: number;
    Logo?: string;
    Tags?: string[];
    href: string;
    slug: string;
    bgColor: string;
+
+   // Blog post specific fields
+   liveLink?: string;
+   codeLink?: string;
+   subHeading?: string;
+   aboutText?: string;
+   features?: FeatureItem[];
+   assets?: string[];
 }
 
 const getTags = (index: number) => {
@@ -26,12 +39,11 @@ const getTags = (index: number) => {
    return tagsSources[index % tagsSources.length];
 };
 
-export const projects: Project[] = [
+const rawProjects: Project[] = [
    {
       title: "Motion Study",
       image: "https://cdn.prod.website-files.com/691024ccc3cf40dbe1a814d3/69143c39ea364966d58a30d3_RedStripedCar.webp",
       Video: "https://cdn.prod.website-files.com/68d154612c134abb70a4785a/68d5ca79fb6e9d6e3bbeb1fd_8683480-uhd_4096_2160_25fps-transcode.mp4",
-     
       year: 2024,
       Logo: "",
       Tags: getTags(0),
@@ -42,7 +54,6 @@ export const projects: Project[] = [
    {
       title: "Idle Form",
       image: "https://cdn.sanity.io/images/3fq51aaa/production/62100bfb6bef5c610fc5288538d3f48e4ec7b547-750x1248.jpg?w=1000&q=80&fm=webp",
-     
       year: 2023,
       Logo: "",
       Tags: getTags(1),
@@ -53,7 +64,6 @@ export const projects: Project[] = [
    {
       title: "Blur Signal",
       image: "https://cdn.prod.website-files.com/691024ccc3cf40dbe1a814d3/69143cb2e17c5ef2b2e817ba_RedCar.webp",
-     
       year: 2024,
       Logo: "",
       Tags: getTags(2),
@@ -64,7 +74,6 @@ export const projects: Project[] = [
    {
       title: "Still Drift",
       image: "https://cdn.prod.website-files.com/691024ccc3cf40dbe1a814d3/6911c3142022816c46f7c2c7_68c4f1033205e4411493eccd_Future.webp",
-     
       year: 2023,
       Logo: "",
       Tags: getTags(3),
@@ -75,7 +84,6 @@ export const projects: Project[] = [
    {
       title: "Silent Horizon",
       image: "https://cdn.sanity.io/images/3fq51aaa/production/867e85eb3292195e4cdee3b47c91d589f5bf5cd2-750x1248.jpg?w=1000&q=80&fm=webp",
-     
       year: 2024,
       Logo: "",
       Tags: getTags(4),
@@ -86,7 +94,6 @@ export const projects: Project[] = [
    {
       title: "Neon Pulse",
       image: "https://cdn.sanity.io/images/3fq51aaa/production/69a7bd78a40fce7fd526fe0262b9d53e7ec91a04-750x1248.jpg?w=1000&q=80&fm=webp",
-     
       year: 2022,
       Logo: "",
       Tags: getTags(5),
@@ -97,7 +104,6 @@ export const projects: Project[] = [
    {
       title: "Echo Frame",
       image: "https://cdn.sanity.io/images/3fq51aaa/production/71e4ccb611e79156fa49abd46767bd67bcdd8903-1500x1800.jpg",
-     
       year: 2023,
       Logo: "",
       Tags: getTags(6),
@@ -108,7 +114,6 @@ export const projects: Project[] = [
    {
       title: "Lunar Static",
       image: "https://cdn.sanity.io/images/3fq51aaa/production/4056c511dbe89e2003ab648fd1c9b94099dd8f9e-750x1248.jpg?w=1000&q=80&fm=webp",
-     
       year: 2024,
       Logo: "",
       Tags: getTags(0),
@@ -119,7 +124,6 @@ export const projects: Project[] = [
    {
       title: "Crimson Fade",
       image: "https://cdn.sanity.io/images/3fq51aaa/production/98d75129913635d813f0af85dc7695e5da1c922f-750x1248.jpg?w=1000&q=80&fm=webp",
-     
       year: 2021,
       Logo: "",
       Tags: getTags(1),
@@ -131,7 +135,6 @@ export const projects: Project[] = [
       title: "Golden Offset",
       image: "https://cdn.sanity.io/images/3fq51aaa/production/4e8c6ffb8843c38f37b7e73086d4e1dee8181bba-750x1248.jpg?w=1000&q=80&fm=webp",
       Video: "https://cdn.sanity.io/files/3fq51aaa/production/1470de704f9fe305759603833de749288cf25969.mp4",
-    
       year: 2022,
       Logo: "",
       Tags: getTags(2),
@@ -142,7 +145,6 @@ export const projects: Project[] = [
    {
       title: "Phantom Grid",
       image: "https://cdn.prod.website-files.com/699b6466d5f19893993a4bf2/699b6466d5f19893993a4f1a_Sunset-Serenity.webp",
-     
       year: 2024,
       Logo: "",
       Tags: getTags(3),
@@ -153,7 +155,6 @@ export const projects: Project[] = [
    {
       title: "Shadow Bloom",
       image: "https://cdn.prod.website-files.com/699b6466d5f19893993a4c2c/699b6466d5f19893993a4e88_work-4-5-p-1600.webp",
-     
       year: 2024,
       Logo: "",
       Tags: getTags(6),
@@ -164,7 +165,6 @@ export const projects: Project[] = [
    {
       title: "Digital Mirage",
       image: "https://cdn.prod.website-files.com/6733e3fe5fe34349ad31f7bc/673b91ae01f8cbf4ed67f6a0_Works%20Images%2004-p-1080.jpg",
-      
       year: 2021,
       Logo: "",
       Tags: getTags(0),
@@ -176,7 +176,6 @@ export const projects: Project[] = [
       title: "Static Bloom",
       image: "https://cdn.prod.website-files.com/670d1e9ed09cfa371f29ab4d/670d28e1c0be0dd6c23fec75_Frame%201.webp",
       Video: "",
-    
       year: 2023,
       Logo: "",
       Tags: getTags(1),
@@ -188,7 +187,6 @@ export const projects: Project[] = [
       title: "Midnight Vector",
       image: "https://cdn.prod.website-files.com/670d1e9ed09cfa371f29ab4d/670d6a0d0364f94e4dc4913d_Frame%209-p-500.webp",
       Video: "",
-     
       year: 2024,
       Logo: "",
       Tags: getTags(2),
@@ -200,7 +198,6 @@ export const projects: Project[] = [
       title: "Silver Current",
       image: "https://framerusercontent.com/images/pb7IVmf5yp2fnj15Jbf5EPgdZk.jpg",
       Video: "",
-     
       year: 2022,
       Logo: "",
       Tags: getTags(3),
@@ -212,7 +209,6 @@ export const projects: Project[] = [
       title: "Urban Flux",
       image: "https://framerusercontent.com/images/RByV4hMsxJRrrY0riO6AjrY2fM.jpg",
       Video: "",
-      
       year: 2023,
       Logo: "",
       Tags: getTags(4),
@@ -224,7 +220,6 @@ export const projects: Project[] = [
       title: "Aurora Shift",
       image: "https://framerusercontent.com/images/NttmaohG1P69PNzRiBuwFbwDw0.webp",
       Video: "",
-      
       year: 2024,
       Logo: "",
       Tags: getTags(5),
@@ -233,3 +228,26 @@ export const projects: Project[] = [
       bgColor: "#1a2a1a",
    },
 ];
+
+export const projects: Project[] = rawProjects.map((p) => ({
+   ...p,
+   liveLink: p.liveLink || "https://example.com/live",
+   codeLink: p.codeLink || "https://example.com/code",
+   subHeading: p.subHeading || "Groundbreaking insights deserve an experience to match. A content-first digital report that allows users to explore insights at their own pace.",
+   aboutText: p.aboutText || "The platform distills complex material into sharp, confident narratives that are as engaging as they are informative. Layered with bold visuals and seamless animation, the experience brings expertise to life in a way that feels natural, exciting, and built for discovery. Created for longevity, the experience evolves with ongoing research and thought leadership.",
+   features: p.features || [
+      { label: "Website / Demo", isLink: true, link: "https://example.com" },
+      { label: "AI" },
+      { label: "POSITIONING" },
+      { label: "TOOL" },
+      { label: "MOTION" },
+      { label: "blogpost" }
+   ],
+   assets: p.assets || [
+      p.image,
+      p.image,
+      p.image,
+      p.image,
+      p.image
+   ]
+}));

@@ -50,6 +50,8 @@ const DRAG_CURVATURE = 0.20;
 
 let textTextures: THREE.CanvasTexture[] = [];
 let animationFrameId: number;
+const startTime = Date.now();
+let isFlattened = false;
 
 
 
@@ -78,9 +80,9 @@ const createTextTexture = (project: Project): THREE.CanvasTexture => {
    ctx.clearRect(0, 0, S, S);
 
    const pad = 28;
-   const dimColor  = "rgba(255, 255, 255, 0.95)";
-   const tagBg     = "rgba(50, 50, 50, 0.85)";
-   const tagText   = "rgba(255, 255, 255, 0.95)";
+   const dimColor = "rgba(255, 255, 255, 0.95)";
+   const tagBg = "rgba(50, 50, 50, 0.85)";
+   const tagText = "rgba(255, 255, 255, 0.95)";
    const tagBorder = "rgba(100, 100, 100, 0.9)";
 
    // ── Font stack ────────────────────────────────────────────────────────────
@@ -312,8 +314,8 @@ const startDrag = (x: number, y: number) => {
    previousMouse.x = x;
    previousMouse.y = y;
 
-   setTimeout(() => isDragging && (targetZoom = config.zoomLevel), 150);
-   targetCurvature = DRAG_CURVATURE;
+   setTimeout(() => isDragging && (targetZoom = isFlattened ? 1.2 : config.zoomLevel), 150);
+   targetCurvature = isFlattened ? 0.0 : DRAG_CURVATURE;
 };
 
 const onPointerDown = (e: MouseEvent) => startDrag(e.clientX, e.clientY);
@@ -330,7 +332,9 @@ const handleMove = (currentX: number, currentY: number) => {
 
    if (Math.abs(deltaX) > 2 || Math.abs(deltaY) > 2) {
       isClick = false;
-      if (targetZoom === 1.0) targetZoom = config.zoomLevel;
+      if (targetZoom === 1.0 || (isFlattened && targetZoom === 1.2)) {
+         targetZoom = isFlattened ? 1.2 : config.zoomLevel;
+      }
    }
 
    targetOffset.x -= deltaX * 0.003;
@@ -350,8 +354,8 @@ const onPointerUp = (event: MouseEvent | TouchEvent) => {
    isDragging = false;
    const gallery = document.getElementById("gallery");
    if (gallery) gallery.classList.remove("dragging");
-   targetZoom = 1.0;
-   targetCurvature = BASE_CURVATURE;
+   targetZoom = isFlattened ? 1.2 : 1.0;
+   targetCurvature = isFlattened ? 0.0 : BASE_CURVATURE;
 
    if (isClick && Date.now() - clickStartTime < 200) {
       const endX = 'clientX' in event ? event.clientX : (event as TouchEvent).changedTouches?.[0]?.clientX;
@@ -363,7 +367,7 @@ const onPointerUp = (event: MouseEvent | TouchEvent) => {
          const screenY = -(((endY - rect.top) / rect.height) * 2 - 1);
 
          const radius = Math.sqrt(screenX * screenX + screenY * screenY);
-         const distortion = 1.1 - 0.08 * radius * radius;
+         const distortion = 1.1 - 0.14 * radius * radius;
 
          const worldX =
             screenX * distortion * (rect.width / rect.height) * zoomLevel +
@@ -503,6 +507,14 @@ const animate = () => {
    offset.y += (targetOffset.y - offset.y) * config.lerpFactor;
    zoomLevel += (targetZoom - zoomLevel) * config.lerpFactor;
    curvatureLevel += (targetCurvature - curvatureLevel) * config.lerpFactor;
+
+   const elapsed = Date.now() - startTime;
+   if (elapsed > 30000 && !isFlattened) {
+      isFlattened = true;
+      // Fade out curvature and adjust zoom for ~3.5 cards across
+      targetCurvature = 0.0;
+      targetZoom = 1.2;
+   }
 
    if (plane?.material.uniforms) {
       plane.material.uniforms.uOffset.value.set(offset.x, offset.y);

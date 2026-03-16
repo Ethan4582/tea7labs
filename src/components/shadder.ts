@@ -27,7 +27,7 @@ export const fragmentShader = `
     return fract((p.x + p.y) * p.x);
   }
 
-  // ── Two-pass Gaussian blur on the image atlas ─────────────────────────────
+  // ── 9-tap Gaussian blur on the image atlas (Optimized) ────────────────────
   vec3 blurAtlas(vec2 uv, float r) {
     vec3 c  = texture2D(uImageAtlas, uv).rgb * 4.0;
     c += texture2D(uImageAtlas, uv + vec2( r,  0.)).rgb * 2.0;
@@ -38,18 +38,19 @@ export const fragmentShader = `
     c += texture2D(uImageAtlas, uv + vec2(-r,  r)).rgb;
     c += texture2D(uImageAtlas, uv + vec2( r, -r)).rgb;
     c += texture2D(uImageAtlas, uv + vec2(-r, -r)).rgb;
-    float r2 = r * 2.0;
-    c += texture2D(uImageAtlas, uv + vec2( r2,  0.)).rgb * 0.5;
-    c += texture2D(uImageAtlas, uv + vec2(-r2,  0.)).rgb * 0.5;
-    c += texture2D(uImageAtlas, uv + vec2( 0.,  r2)).rgb * 0.5;
-    c += texture2D(uImageAtlas, uv + vec2( 0., -r2)).rgb * 0.5;
-    return c / 18.0;
+    return c / 16.0;
   }
 
   void main() {
     vec2 screenUV = (vUv - 0.5) * 2.0;
     float radius = length(screenUV);
-    float distortion = 1.1 - uCurvature * radius * radius;
+    
+    // Optimized distortion: skip math if flat
+    float distortion = 1.1;
+    if (uCurvature > 0.001) {
+      distortion -= uCurvature * radius * radius;
+    }
+    
     vec2 worldCoord = screenUV * distortion * vec2(uResolution.x / uResolution.y, 1.0);
     worldCoord = worldCoord * uZoom + uOffset;
 
@@ -61,7 +62,11 @@ export const fragmentShader = `
     vec2 mUV = (uMousePos / uResolution) * 2.0 - 1.0;
     mUV.y = -mUV.y;
     float mRad = length(mUV);
-    vec2 mWorld = mUV * (1.1 - uCurvature * mRad * mRad) * vec2(uResolution.x / uResolution.y, 1.0);
+    float mDistort = 1.1;
+    if (uCurvature > 0.001) {
+      mDistort -= uCurvature * mRad * mRad;
+    }
+    vec2 mWorld = mUV * mDistort * vec2(uResolution.x / uResolution.y, 1.0);
     mWorld = mWorld * uZoom + uOffset;
     vec2 mouseCellId = floor(mWorld / uCellSize);
 
