@@ -41,12 +41,12 @@ let mousePosition = { x: -1, y: -1 };
 let zoomLevel = 1.0;
 let targetZoom = 1.0;
 
-// Curvature — 0.22 at rest, increases to 0.38 while dragging/scrolling
-let curvatureLevel = 0.22;
-let targetCurvature = 0.24;
+// Curvature — 0.10 at rest, increases to 0.14 while dragging/scrolling
+let curvatureLevel = 0.14;
+let targetCurvature = 0.14;
 
-const BASE_CURVATURE = 0.22;
-const DRAG_CURVATURE = 0.24;
+const BASE_CURVATURE = 0.14;
+const DRAG_CURVATURE = 0.20;
 
 let textTextures: THREE.CanvasTexture[] = [];
 let animationFrameId: number;
@@ -78,10 +78,10 @@ const createTextTexture = (project: Project): THREE.CanvasTexture => {
    ctx.clearRect(0, 0, S, S);
 
    const pad = 28;
-   const dimColor  = "rgba(160, 160, 160, 0.90)";
-   const tagBg     = "rgba(30, 30, 30, 0.85)";
-   const tagText   = "rgba(200, 200, 200, 1)";
-   const tagBorder = "rgba(80, 80, 80, 0.9)";
+   const dimColor  = "rgba(255, 255, 255, 0.95)";
+   const tagBg     = "rgba(50, 50, 50, 0.85)";
+   const tagText   = "rgba(255, 255, 255, 0.95)";
+   const tagBorder = "rgba(100, 100, 100, 0.9)";
 
    // ── Font stack ────────────────────────────────────────────────────────────
    const monoFont = `"IBM Plex Mono", "Courier New", monospace`;
@@ -108,43 +108,47 @@ const createTextTexture = (project: Project): THREE.CanvasTexture => {
       const tagFontSize = 22;
       ctx.font = `500 ${tagFontSize}px ${monoFont}`;
       const pillH = 36;
-      const pillPadX = 18;
+      const pillPadX = 14;
       const pillGap = 10;
       const bottomY = S - pad - pillH;
 
       let curX = pad;
-      project.Tags.forEach((tag) => {
+      project.Tags.forEach((tag, idx) => {
          const label = tag.toUpperCase();
          const textW = ctx.measureText(label).width;
-         const pillW = textW + pillPadX * 2;
+         const isFirst = idx === 0;
+         const pillW = isFirst ? textW : textW + pillPadX * 2;
 
-         // Pill background
-         ctx.beginPath();
-         const r = pillH / 2;
-         ctx.moveTo(curX + r, bottomY);
-         ctx.lineTo(curX + pillW - r, bottomY);
-         ctx.arcTo(curX + pillW, bottomY, curX + pillW, bottomY + pillH, r);
-         ctx.lineTo(curX + pillW, bottomY + r);
-         ctx.arcTo(curX + pillW, bottomY + pillH, curX + pillW - r, bottomY + pillH, r);
-         ctx.lineTo(curX + r, bottomY + pillH);
-         ctx.arcTo(curX, bottomY + pillH, curX, bottomY + r, r);
-         ctx.lineTo(curX, bottomY + r);
-         ctx.arcTo(curX, bottomY, curX + r, bottomY, r);
-         ctx.closePath();
+         if (!isFirst) {
+            // Pill background
+            ctx.beginPath();
+            const r = pillH / 2;
+            ctx.moveTo(curX + r, bottomY);
+            ctx.lineTo(curX + pillW - r, bottomY);
+            ctx.arcTo(curX + pillW, bottomY, curX + pillW, bottomY + pillH, r);
+            ctx.lineTo(curX + pillW, bottomY + r);
+            ctx.arcTo(curX + pillW, bottomY + pillH, curX + pillW - r, bottomY + pillH, r);
+            ctx.lineTo(curX + r, bottomY + pillH);
+            ctx.arcTo(curX, bottomY + pillH, curX, bottomY + r, r);
+            ctx.lineTo(curX, bottomY + r);
+            ctx.arcTo(curX, bottomY, curX + r, bottomY, r);
+            ctx.closePath();
 
-         ctx.fillStyle = tagBg;
-         ctx.fill();
-         ctx.strokeStyle = tagBorder;
-         ctx.lineWidth = 1.5;
-         ctx.stroke();
+            ctx.fillStyle = tagBg;
+            ctx.fill();
+            ctx.strokeStyle = tagBorder;
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+         }
 
          // Tag text
-         ctx.fillStyle = tagText;
+         ctx.fillStyle = isFirst ? dimColor : tagText;
          ctx.textAlign = "left";
          ctx.textBaseline = "middle";
-         ctx.fillText(label, curX + pillPadX, bottomY + pillH / 2);
+         const textX = isFirst ? curX : curX + pillPadX;
+         ctx.fillText(label, textX, bottomY + pillH / 2);
 
-         curX += pillW + pillGap;
+         curX += pillW + pillGap * (isFirst ? 1.5 : 1);
          // Stop if running out of space
          if (curX > S - pad * 3) return;
       });
@@ -194,7 +198,7 @@ const createTextureAtlas = (textures: THREE.Texture[], isText = false): THREE.Ca
    // This eliminates empty cards regardless of how many projects vs atlas slots.
    const totalSlots = atlasSize * atlasSize;
    for (let slot = 0; slot < totalSlots; slot++) {
-      // Wrap: slot 17 uses texture 0, slot 18 uses texture 1, etc.
+      // Wrap: slot 17 uses texture 0, slot 14 uses texture 1, etc.
       const texture = textures[slot % textures.length];
       const x = (slot % atlasSize) * textureSize;
       const y = Math.floor(slot / atlasSize) * textureSize;

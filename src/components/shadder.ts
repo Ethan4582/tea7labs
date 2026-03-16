@@ -49,7 +49,7 @@ export const fragmentShader = `
   void main() {
     vec2 screenUV = (vUv - 0.5) * 2.0;
     float radius = length(screenUV);
-    float distortion = 1.1 - 0.08 * radius * radius;
+    float distortion = 1.1 - uCurvature * radius * radius;
     vec2 worldCoord = screenUV * distortion * vec2(uResolution.x / uResolution.y, 1.0);
     worldCoord = worldCoord * uZoom + uOffset;
 
@@ -61,7 +61,7 @@ export const fragmentShader = `
     vec2 mUV = (uMousePos / uResolution) * 2.0 - 1.0;
     mUV.y = -mUV.y;
     float mRad = length(mUV);
-    vec2 mWorld = mUV * (1.1 - 0.08 * mRad * mRad) * vec2(uResolution.x / uResolution.y, 1.0);
+    vec2 mWorld = mUV * (1.1 - uCurvature * mRad * mRad) * vec2(uResolution.x / uResolution.y, 1.0);
     mWorld = mWorld * uZoom + uOffset;
     vec2 mouseCellId = floor(mWorld / uCellSize);
 
