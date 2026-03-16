@@ -11,8 +11,7 @@ export interface Project {
    image: string;
    Video?: string;
    year: number;
-   Logo?: string;
-   Tags?: string[];
+   Logo?: string;Tags: ["EXPERIENCE", "3D", "WEBGL"],
    href: string;
    slug: string;
    bgColor: string;
@@ -26,207 +25,362 @@ export interface Project {
    assets?: string[];
 }
 
-const getTags = (index: number) => {
-   const tagsSources = [
-      PROJECTS_DATA[0].projects[0].tags,
-      PROJECTS_DATA[1].projects[0].tags,
-      PROJECTS_DATA[1].projects[1].tags,
-      PROJECTS_DATA[1].projects[2].tags,
-      PROJECTS_DATA[1].projects[3].tags,
-      PROJECTS_DATA[1].projects[4].tags,
-      PROJECTS_DATA[1].projects[5].tags,
-   ];
-   return tagsSources[index % tagsSources.length];
-};
+
 
 const rawProjects: Project[] = [
    {
-      title: "Motion Study",
-      image: "https://cdn.prod.website-files.com/691024ccc3cf40dbe1a814d3/69143c39ea364966d58a30d3_RedStripedCar.webp",
-      Video: "https://cdn.prod.website-files.com/68d154612c134abb70a4785a/68d5ca79fb6e9d6e3bbeb1fd_8683480-uhd_4096_2160_25fps-transcode.mp4",
-      year: 2024,
-      Logo: "",
-      Tags: getTags(0),
-      href: "/projects/motion-study",
-      slug: "motion-study",
-      bgColor: "#2a2a2a",
-   },
-   {
-      title: "Idle Form",
-      image: "https://cdn.sanity.io/images/3fq51aaa/production/62100bfb6bef5c610fc5288538d3f48e4ec7b547-750x1248.jpg?w=1000&q=80&fm=webp",
-      year: 2023,
-      Logo: "",
-      Tags: getTags(1),
-      href: "/projects/idle-form",
-      slug: "idle-form",
-      bgColor: "#1a1c29",
-   },
-   {
-      title: "Blur Signal",
-      image: "https://cdn.prod.website-files.com/691024ccc3cf40dbe1a814d3/69143cb2e17c5ef2b2e817ba_RedCar.webp",
-      year: 2024,
-      Logo: "",
-      Tags: getTags(2),
-      href: "/projects/blur-signal",
-      slug: "blur-signal",
-      bgColor: "#2d1b1b",
-   },
-   {
-      title: "Still Drift",
-      image: "https://cdn.prod.website-files.com/691024ccc3cf40dbe1a814d3/6911c3142022816c46f7c2c7_68c4f1033205e4411493eccd_Future.webp",
-      year: 2023,
-      Logo: "",
-      Tags: getTags(3),
-      href: "/projects/still-drift",
-      slug: "still-drift",
-      bgColor: "#1e3025",
-   },
-   {
-      title: "Silent Horizon",
-      image: "https://cdn.sanity.io/images/3fq51aaa/production/867e85eb3292195e4cdee3b47c91d589f5bf5cd2-750x1248.jpg?w=1000&q=80&fm=webp",
-      year: 2024,
-      Logo: "",
-      Tags: getTags(4),
-      href: "/projects/silent-horizon",
-      slug: "silent-horizon",
-      bgColor: "#1c2136",
-   },
-   {
-      title: "Neon Pulse",
-      image: "https://cdn.sanity.io/images/3fq51aaa/production/69a7bd78a40fce7fd526fe0262b9d53e7ec91a04-750x1248.jpg?w=1000&q=80&fm=webp",
-      year: 2022,
-      Logo: "",
-      Tags: getTags(5),
-      href: "/projects/neon-pulse",
-      slug: "neon-pulse",
-      bgColor: "#361c33",
-   },
-   {
-      title: "Echo Frame",
-      image: "https://cdn.sanity.io/images/3fq51aaa/production/71e4ccb611e79156fa49abd46767bd67bcdd8903-1500x1800.jpg",
-      year: 2023,
-      Logo: "",
-      Tags: getTags(6),
-      href: "/projects/echo-frame",
-      slug: "echo-frame",
-      bgColor: "#2e2520",
-   },
-   {
-      title: "Lunar Static",
-      image: "https://cdn.sanity.io/images/3fq51aaa/production/4056c511dbe89e2003ab648fd1c9b94099dd8f9e-750x1248.jpg?w=1000&q=80&fm=webp",
-      year: 2024,
-      Logo: "",
-      Tags: getTags(0),
-      href: "/projects/lunar-static",
-      slug: "lunar-static",
-      bgColor: "#282a30",
-   },
-   {
-      title: "Crimson Fade",
-      image: "https://cdn.sanity.io/images/3fq51aaa/production/98d75129913635d813f0af85dc7695e5da1c922f-750x1248.jpg?w=1000&q=80&fm=webp",
-      year: 2021,
-      Logo: "",
-      Tags: getTags(1),
-      href: "/projects/crimson-fade",
-      slug: "crimson-fade",
-      bgColor: "#3c1818",
-   },
-   {
-      title: "Golden Offset",
-      image: "https://cdn.sanity.io/images/3fq51aaa/production/4e8c6ffb8843c38f37b7e73086d4e1dee8181bba-750x1248.jpg?w=1000&q=80&fm=webp",
-      Video: "https://cdn.sanity.io/files/3fq51aaa/production/1470de704f9fe305759603833de749288cf25969.mp4",
-      year: 2022,
-      Logo: "",
-      Tags: getTags(2),
-      href: "/projects/golden-offset",
-      slug: "golden-offset",
-      bgColor: "#332d18",
-   },
-   {
-      title: "Phantom Grid",
-      image: "https://cdn.prod.website-files.com/699b6466d5f19893993a4bf2/699b6466d5f19893993a4f1a_Sunset-Serenity.webp",
-      year: 2024,
-      Logo: "",
-      Tags: getTags(3),
-      href: "/projects/phantom-grid",
-      slug: "phantom-grid",
-      bgColor: "#14252a",
-   },
-   {
-      title: "Shadow Bloom",
-      image: "https://cdn.prod.website-files.com/699b6466d5f19893993a4c2c/699b6466d5f19893993a4e88_work-4-5-p-1600.webp",
-      year: 2024,
-      Logo: "",
-      Tags: getTags(6),
-      href: "/projects/shadow-bloom",
-      slug: "shadow-bloom",
-      bgColor: "#20222a",
-   },
-   {
-      title: "Digital Mirage",
-      image: "https://cdn.prod.website-files.com/6733e3fe5fe34349ad31f7bc/673b91ae01f8cbf4ed67f6a0_Works%20Images%2004-p-1080.jpg",
-      year: 2021,
-      Logo: "",
-      Tags: getTags(0),
-      href: "/projects/digital-mirage",
-      slug: "digital-mirage",
-      bgColor: "#23261f",
-   },
-   {
-      title: "Static Bloom",
-      image: "https://cdn.prod.website-files.com/670d1e9ed09cfa371f29ab4d/670d28e1c0be0dd6c23fec75_Frame%201.webp",
-      Video: "",
-      year: 2023,
-      Logo: "",
-      Tags: getTags(1),
-      href: "/projects/static-bloom",
-      slug: "static-bloom",
-      bgColor: "#2a1e1d",
-   },
-   {
-      title: "Midnight Vector",
-      image: "https://cdn.prod.website-files.com/670d1e9ed09cfa371f29ab4d/670d6a0d0364f94e4dc4913d_Frame%209-p-500.webp",
-      Video: "",
-      year: 2024,
-      Logo: "",
-      Tags: getTags(2),
-      href: "/projects/midnight-vector",
-      slug: "midnight-vector",
-      bgColor: "#16182c",
-   },
-   {
-      title: "Silver Current",
-      image: "https://framerusercontent.com/images/pb7IVmf5yp2fnj15Jbf5EPgdZk.jpg",
-      Video: "",
-      year: 2022,
-      Logo: "",
-      Tags: getTags(3),
-      href: "/projects/silver-current",
-      slug: "silver-current",
-      bgColor: "#262b32",
-   },
-   {
-      title: "Urban Flux",
-      image: "https://framerusercontent.com/images/RByV4hMsxJRrrY0riO6AjrY2fM.jpg",
-      Video: "",
-      year: 2023,
-      Logo: "",
-      Tags: getTags(4),
-      href: "/projects/urban-flux",
-      slug: "urban-flux",
-      bgColor: "#24201c",
-   },
-   {
-      title: "Aurora Shift",
-      image: "https://framerusercontent.com/images/NttmaohG1P69PNzRiBuwFbwDw0.webp",
-      Video: "",
-      year: 2024,
-      Logo: "",
-      Tags: getTags(5),
-      href: "/projects/aurora-shift",
-      slug: "aurora-shift",
-      bgColor: "#1a2a1a",
-   },
+title:"Neon Frame",
+image:"https://picsum.photos/id/1011/900/1200",
+year:2024,
+Logo:"",
+Tags: ["EXPERIENCE", "3D", "WEBGL"],
+href:"/projects/neon-frame",
+slug:"neon-frame",
+bgColor:"#1f1f2e"
+},
+{
+title:"Silent Code",
+image:"https://picsum.photos/id/1015/900/1200",
+year:2023,
+Logo:"",
+Tags: ["EXPERIENCE", "3D", "WEBGL"],
+href:"/projects/silent-code",
+slug:"silent-code",
+bgColor:"#242433"
+},
+{
+title:"Pixel Motion",
+image:"https://picsum.photos/id/1016/900/1200",
+year:2024,
+Logo:"",
+Tags: ["EXPERIENCE", "3D", "WEBGL"],
+href:"/projects/pixel-motion",
+slug:"pixel-motion",
+bgColor:"#1b2735"
+},
+{
+title:"Shadow Drift",
+image:"https://picsum.photos/id/1020/900/1200",
+year:2023,
+Logo:"",
+Tags: ["EXPERIENCE", "3D", "WEBGL"],
+href:"/projects/shadow-drift",
+slug:"shadow-drift",
+bgColor:"#2c2f3a"
+},
+{
+title:"Liquid Light",
+image:"https://picsum.photos/id/1024/900/1200",
+year:2024,
+Logo:"",
+Tags: ["EXPERIENCE", "3D", "WEBGL"],
+href:"/projects/liquid-light",
+slug:"liquid-light",
+bgColor:"#1c1f2b"
+},
+{
+title:"Orbit Design",
+image:"https://picsum.photos/id/1027/900/1200",
+year:2023,
+Logo:"",
+Tags: ["EXPERIENCE", "3D", "WEBGL"],
+href:"/projects/orbit-design",
+slug:"orbit-design",
+bgColor:"#1e2b2e"
+},
+{
+title:"Glass Pulse",
+image:"https://picsum.photos/id/1033/900/1200",
+year:2024,
+Logo:"",
+Tags: ["EXPERIENCE", "3D", "WEBGL"],
+href:"/projects/glass-pulse",
+slug:"glass-pulse",
+bgColor:"#232323"
+},
+{
+title:"Echo Render",
+image:"https://picsum.photos/id/1035/900/1200",
+year:2024,
+Logo:"",
+Tags: ["EXPERIENCE", "3D", "WEBGL"],
+href:"/projects/echo-render",
+slug:"echo-render",
+bgColor:"#292f36"
+},
+{
+title:"Future Thread",
+image:"https://picsum.photos/id/1037/900/1200",
+year:2023,
+Logo:"",
+Tags: ["EXPERIENCE", "3D", "WEBGL"],
+href:"/projects/future-thread",
+slug:"future-thread",
+bgColor:"#21232c"
+},
+{
+title:"Blur Phase",
+image:"https://picsum.photos/id/1040/900/1200",
+year:2024,
+Logo:"",
+Tags: ["EXPERIENCE", "3D", "WEBGL"],
+href:"/projects/blur-phase",
+slug:"blur-phase",
+bgColor:"#202028"
+},
+{
+title:"Vector Path",
+image:"https://picsum.photos/id/1041/900/1200",
+year:2023,
+Logo:"",
+Tags: ["EXPERIENCE", "3D", "WEBGL"],
+href:"/projects/vector-path",
+slug:"vector-path",
+bgColor:"#1a2634"
+},
+{
+title:"Nova Screen",
+image:"https://picsum.photos/id/1043/900/1200",
+year:2024,
+Logo:"",
+Tags: ["EXPERIENCE", "3D", "WEBGL"],
+href:"/projects/nova-screen",
+slug:"nova-screen",
+bgColor:"#1c2a22"
+},
+{
+title:"Crystal Depth",
+image:"https://picsum.photos/id/1050/900/1200",
+year:2024,
+Logo:"",
+Tags: ["EXPERIENCE", "3D", "WEBGL"],
+href:"/projects/crystal-depth",
+slug:"crystal-depth",
+bgColor:"#2b1f2b"
+},
+{
+title:"Digital Still",
+image:"https://picsum.photos/id/1052/900/1200",
+year:2023,
+Logo:"",
+Tags: ["EXPERIENCE", "3D", "WEBGL"],
+href:"/projects/digital-still",
+slug:"digital-still",
+bgColor:"#23282e"
+},
+{
+title:"Reflex Tone",
+image:"https://picsum.photos/id/1060/900/1200",
+year:2024,
+Logo:"",
+Tags: ["EXPERIENCE", "3D", "WEBGL"],
+href:"/projects/reflex-tone",
+slug:"reflex-tone",
+bgColor:"#1f2c24"
+},
+{
+title:"Dynamic Layer",
+image:"https://picsum.photos/id/1067/900/1200",
+year:2023,
+Logo:"",
+Tags: ["EXPERIENCE", "3D", "WEBGL"],
+href:"/projects/dynamic-layer",
+slug:"dynamic-layer",
+bgColor:"#2d2323"
+},
+{
+title:"Aurora Frame",
+image:"https://picsum.photos/id/1070/900/1200",
+year:2024,
+Logo:"",
+Tags: ["EXPERIENCE", "3D", "WEBGL"],
+href:"/projects/aurora-frame",
+slug:"aurora-frame",
+bgColor:"#1d2431"
+},
+{
+title:"Quantum Grid",
+image:"https://picsum.photos/id/1080/900/1200",
+year:2024,
+Logo:"",
+Tags: ["EXPERIENCE", "3D", "WEBGL"],
+href:"/projects/quantum-grid",
+slug:"quantum-grid",
+bgColor:"#1c1c22"
+},
+{
+title:"Sonic Canvas",
+image:"https://picsum.photos/id/1084/900/1200",
+year:2023,
+Logo:"",
+Tags: ["EXPERIENCE", "3D", "WEBGL"],
+href:"/projects/sonic-canvas",
+slug:"sonic-canvas",
+bgColor:"#232c29"
+},
+{
+title:"Neural Blur",
+image:"https://picsum.photos/id/1081/900/1200",
+year:2024,
+Logo:"",
+Tags: ["EXPERIENCE", "3D", "WEBGL"],
+href:"/projects/neural-blur",
+slug:"neural-blur",
+bgColor:"#2a2020"
+},
+{
+title:"Stellar Drift",
+image:"https://picsum.photos/id/1082/900/1200",
+year:2023,
+Logo:"",
+Tags: ["EXPERIENCE", "3D", "WEBGL"],
+href:"/projects/stellar-drift",
+slug:"stellar-drift",
+bgColor:"#1a2a33"
+},
+{
+title:"Optic Pulse",
+image:"https://picsum.photos/id/1083/900/1200",
+year:2024,
+Logo:"",
+Tags: ["EXPERIENCE", "3D", "WEBGL"],
+href:"/projects/optic-pulse",
+slug:"optic-pulse",
+bgColor:"#1c2230"
+},
+{
+title:"Gamma Motion",
+image:"https://picsum.photos/id/1085/900/1200",
+year:2024,
+Logo:"",
+Tags: ["EXPERIENCE", "3D", "WEBGL"],
+href:"/projects/gamma-motion",
+slug:"gamma-motion",
+bgColor:"#252525"
+},
+{
+title:"Fluid Echo",
+image:"https://picsum.photos/id/1089/900/1200",
+year:2023,
+Logo:"",
+Tags: ["EXPERIENCE", "3D", "WEBGL"],
+href:"/projects/fluid-echo",
+slug:"fluid-echo",
+bgColor:"#2a2a30"
+},
+{
+title:"Binary Horizon",
+image:"https://picsum.photos/id/109/900/1200",
+year:2024,
+Logo:"",
+Tags: ["EXPERIENCE", "3D", "WEBGL"],
+href:"/projects/binary-horizon",
+slug:"binary-horizon",
+bgColor:"#1f2528"
+},
+{
+title:"Nova Geometry",
+image:"https://picsum.photos/id/110/900/1200",
+year:2023,
+Logo:"",
+Tags: ["EXPERIENCE", "3D", "WEBGL"],
+href:"/projects/nova-geometry",
+slug:"nova-geometry",
+bgColor:"#1b1e27"
+},
+{
+title:"Magnet Shift",
+image:"https://picsum.photos/id/111/900/1200",
+year:2024,
+Logo:"",
+Tags: ["EXPERIENCE", "3D", "WEBGL"],
+href:"/projects/magnet-shift",
+slug:"magnet-shift",
+bgColor:"#2b2d35"
+},
+{
+title:"Spectrum Flow",
+image:"https://picsum.photos/id/112/900/1200",
+year:2024,
+Logo:"",
+Tags: ["EXPERIENCE", "3D", "WEBGL"],
+href:"/projects/spectrum-flow",
+slug:"spectrum-flow",
+bgColor:"#1e2830"
+},
+{
+title:"Photon Surface",
+image:"https://picsum.photos/id/113/900/1200",
+year:2023,
+Logo:"",
+Tags: ["EXPERIENCE", "3D", "WEBGL"],
+href:"/projects/photon-surface",
+slug:"photon-surface",
+bgColor:"#1d2121"
+},
+{
+title:"Matrix Edge",
+image:"https://picsum.photos/id/114/900/1200",
+year:2024,
+Logo:"",
+Tags: ["EXPERIENCE", "3D", "WEBGL"],
+href:"/projects/matrix-edge",
+slug:"matrix-edge",
+bgColor:"#1a1f2c"
+},
+{
+title:"Pulse Archive",
+image:"https://picsum.photos/id/115/900/1200",
+year:2024,
+Logo:"",
+Tags: ["EXPERIENCE", "3D", "WEBGL"],
+href:"/projects/pulse-archive",
+slug:"pulse-archive",
+bgColor:"#242424"
+},
+{
+title:"Zenith Motion",
+image:"https://picsum.photos/id/116/900/1200",
+year:2023,
+Logo:"",
+Tags: ["EXPERIENCE", "3D", "WEBGL"],
+href:"/projects/zenith-motion",
+slug:"zenith-motion",
+bgColor:"#1e2626"
+},
+{
+title:"Infinite Layer",
+image:"https://picsum.photos/id/117/900/1200",
+year:2024,
+Logo:"",
+Tags: ["EXPERIENCE", "3D", "WEBGL"],
+href:"/projects/infinite-layer",
+slug:"infinite-layer",
+bgColor:"#23212c"
+},
+{
+title:"Signal Render",
+image:"https://picsum.photos/id/118/900/1200",
+year:2024,
+Logo:"",
+Tags: ["EXPERIENCE", "3D", "WEBGL"],
+href:"/projects/signal-render",
+slug:"signal-render",
+bgColor:"#1c2029"
+},
+{
+title:"Horizon Bloom",
+image:"https://picsum.photos/id/119/900/1200",
+year:2023,
+Logo:"",
+Tags: ["EXPERIENCE", "3D", "WEBGL"],
+href:"/projects/horizon-bloom",
+slug:"horizon-bloom",
+bgColor:"#222831"
+}
+
+   
+   
 ];
 
 export const projects: Project[] = rawProjects.map((p) => ({

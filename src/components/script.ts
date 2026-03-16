@@ -48,7 +48,6 @@ let targetCurvature = 0.14;
 const BASE_CURVATURE = 0.14;
 const DRAG_CURVATURE = 0.20;
 
-let textTextures: THREE.CanvasTexture[] = [];
 let animationFrameId: number;
 const startTime = Date.now();
 let isFlattened = false;
@@ -65,6 +64,22 @@ const rgbaToArray = (rgba: string): number[] => {
       );
 };
 
+// ── Shared distribution logic so projects never cluster or disappear ────────
+const getAtlasStep = (len: number): number => {
+   const gcd = (a: number, b: number): number => (b === 0 ? a : gcd(b, a % b));
+   let step = 7;
+   // Ensure step is coprime to length, so we hit every single project exactly once per cycle
+   while (gcd(len, step) !== 1) step++;
+   return step;
+};
+
+// ── IQ-style hash synchronized with shadder.ts ──────────────────────────────
+const cellHash = (x: number, y: number): number => {
+   // Simple hash function to get a pseudo-random value based on cell coordinates
+   // This should ideally match the hashing in the shader for consistent behavior
+   const h = (x * 0x1f1f1f1f) ^ y;
+   return ((h % 2147483647) + 2147483647) % 2147483647 / 2147483647; // Normalize to [0, 1)
+};
 
 
 const CELL_TEX_SIZE = 1024; // square canvas representing one full cell
@@ -196,12 +211,14 @@ const createTextureAtlas = (textures: THREE.Texture[], isText = false): THREE.Ca
       ctx.fillRect(0, 0, canvas.width, canvas.height);
    }
 
-   // Fill ALL atlasSize² slots — wrap textures[] so no slot is ever black/empty.
-   // This eliminates empty cards regardless of how many projects vs atlas slots.
+   // Fill ALL atlasSize² slots — spread textures[] so no slot is ever black/empty.
+   // Using a dynamically coprime step distributes repetitions safely.
    const totalSlots = atlasSize * atlasSize;
+   const step = getAtlasStep(textures.length);
+   
    for (let slot = 0; slot < totalSlots; slot++) {
-      // Wrap: slot 17 uses texture 0, slot 14 uses texture 1, etc.
-      const texture = textures[slot % textures.length];
+      const textureIndex = (slot * step) % textures.length;
+      const texture = textures[textureIndex];
       const x = (slot % atlasSize) * textureSize;
       const y = Math.floor(slot / atlasSize) * textureSize;
 
@@ -234,26 +251,31 @@ const createTextureAtlas = (textures: THREE.Texture[], isText = false): THREE.Ca
    return atlasTexture;
 };
 
-const loadTextures = (): Promise<THREE.Texture[]> => {
+const loadTextures = (): Promise<{
+   imageTextures: THREE.Texture[];
+   textTexturesData: THREE.CanvasTexture[];
+}> => {
    const textureLoader = new THREE.TextureLoader();
-   // Enable cross-origin for external CDN URLs
    textureLoader.crossOrigin = "anonymous";
+   
+   // Keep arrays local so they strictly match projects.length, 
+   // immune to React StrictMode double-mounting
    const imageTextures: THREE.Texture[] = [];
+   const textTexturesData: THREE.CanvasTexture[] = [];
    let loadedCount = 0;
 
    return new Promise((resolve) => {
       projects.forEach((project: Project, projectIndex: number) => {
-         // Push a placeholder first so the index stays aligned with projectIndex
-         const placeholder = new THREE.Texture();
-         imageTextures.push(placeholder);
-         textTextures.push(createTextTexture(project));
+         // Push placeholders to maintain index alignment
+         imageTextures.push(new THREE.Texture());
+         textTexturesData.push(createTextTexture(project));
 
          const texture = textureLoader.load(
             project.image,
             () => {
                // Swap the loaded texture into the correct slot
                imageTextures[projectIndex] = texture;
-               if (++loadedCount === projects.length) resolve(imageTextures);
+               if (++loadedCount === projects.length) resolve({ imageTextures, textTexturesData });
             },
             undefined,
             () => {
@@ -278,7 +300,7 @@ const loadTextures = (): Promise<THREE.Texture[]> => {
                   magFilter: THREE.LinearFilter,
                });
                imageTextures[projectIndex] = fallback;
-               if (++loadedCount === projects.length) resolve(imageTextures);
+               if (++loadedCount === projects.length) resolve({ imageTextures, textTexturesData });
             }
          );
 
@@ -376,9 +398,14 @@ const onPointerUp = (event: MouseEvent | TouchEvent) => {
 
          const cellX = Math.floor(worldX / config.cellSize);
          const cellY = Math.floor(worldY / config.cellSize);
-         const texIndex = Math.floor((cellX + cellY * 3.0) % projects.length);
-         const actualIndex =
-            texIndex < 0 ? projects.length + texIndex : texIndex;
+         const atlasSize = Math.ceil(Math.sqrt(projects.length));
+         const totalSlots = atlasSize * atlasSize;
+         const hash = cellHash(cellX, cellY);
+         const slotIndex = Math.floor(hash * totalSlots);
+         
+         // Match the dynamic shuffle used in createTextureAtlas
+         const step = getAtlasStep(projects.length);
+         const actualIndex = (slotIndex * step) % projects.length;
 
          if (projects[actualIndex]?.href) {
             window.location.href = projects[actualIndex].href;
@@ -474,10 +501,6 @@ export const cleanup = () => {
       renderer.forceContextLoss();
    }
 
-   // ── CRITICAL: reset module-level state so init() starts 100% clean ─────
-   // textTextures accumulates on every init() call — must be cleared here
-   textTextures = [];
-
    // Null out all Three.js object refs
    scene = undefined;
    camera = undefined;
@@ -533,6 +556,8 @@ export const init = async () => {
    if (!container) return;
    if (container.querySelector("canvas")) return;
 
+   cleanup(); // Neutralize old event listeners/loops before starting fresh
+
    scene = new THREE.Scene();
    camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 10);
    camera.position.z = 1;
@@ -549,9 +574,9 @@ export const init = async () => {
 
    container.appendChild(renderer.domElement);
 
-   const imageTextures = await loadTextures();
+   const { imageTextures, textTexturesData } = await loadTextures();
    const imageAtlas = createTextureAtlas(imageTextures, false);
-   const textAtlas = createTextureAtlas(textTextures, true);
+   const textAtlas = createTextureAtlas(textTexturesData, true);
 
    const uniforms = {
       uOffset: { value: new THREE.Vector2(0, 0) },
