@@ -45,10 +45,9 @@ export default function NavBar() {
             <div className="flex items-center gap-4 sm:gap-6 pointer-events-auto">
                <a 
                   href="/" 
-                  className="text-lg sm:text-2xl font-bold tracking-tighter hover:opacity-80 transition-opacity whitespace-nowrap"
-                  style={{ fontFamily: "var(--font-instrument-serif), serif" }}
+                  className="hover:opacity-80 transition-opacity whitespace-nowrap"
                >
-                  T7_LABS
+                  <img src="/logo/whitelogo.png" alt="T7LABS" className="h-6 sm:h-8 w-auto object-contain" />
                </a>
                <span className="opacity-40">|</span>
                {project.Logo && (
@@ -76,10 +75,9 @@ export default function NavBar() {
          <div className="pointer-events-auto">
             <a 
                href="/" 
-               className="text-lg sm:text-2xl font-bold tracking-tighter hover:opacity-80 transition-opacity"
-               style={{ fontFamily: "var(--font-instrument-serif), serif" }}
+               className="hover:opacity-80 transition-opacity"
             >
-               T7_LABS
+               <img src="/logo/whitelogo.png" alt="T7LABS" className="h-6 sm:h-8 w-auto object-contain" />
             </a>
          </div>
 

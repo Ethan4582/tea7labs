@@ -1,7 +1,4 @@
-export const SITE_METADATA = {
-   title: "T7LABS",
-   description: "CRAFTING OPEN-SOURCE INNOVATION & PREMIUM EXPERIENCES FOR DEVELOPERS.",
-};
+
 
 export const NAVBAR_CONTENT = {
    brand: "TAE7LAB — FOUNDED BY ASHIRWAD",

@@ -4,8 +4,6 @@ import "./globals.css";
 import NavBar from "../components/NavBar/NavBar";
 import BottomNav from "../components/NavBar/BottomNav";
 
-import { SITE_METADATA } from "../lib/content_data";
-
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -17,14 +15,19 @@ const geistMono = Geist_Mono({
 });
 
 const instrumentSerif = Instrument_Serif({
-   weight: "400",
-   subsets: ["latin"],
-   variable: "--font-instrument-serif",
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-instrument-serif",
 });
 
 export const metadata: Metadata = {
-  title: SITE_METADATA.title,
-  description: SITE_METADATA.description,
+  title: "T7LABS",
+  description: "CRAFTING OPEN-SOURCE INNOVATION & PREMIUM EXPERIENCES FOR DEVELOPERS",
+  icons: {
+    icon: "/logo/bluelogo.png",
+    shortcut: "/logo/bluelogo.png",
+    apple: "/logo/bluelogo.png",
+  },
 };
 
 export default function RootLayout({
